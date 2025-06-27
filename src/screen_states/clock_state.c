@@ -18,6 +18,7 @@
 struct ClockData
 {
     int play_alarm;
+    int textures_loaded;
     struct Button alarm_button;
     struct Button toggle_button;
     struct Button snooze_button;
@@ -123,10 +124,16 @@ void transition_to_clock(ScreenStatePtr state)
     struct tm alarm_tm = get_alarm();
     strftime(clock_data.alarm_cmp, 26, "%H:%M", &alarm_tm);
 
-    TextureSet toggle_texture = { "assets/alarm.png", 10 };
-    TextureSet alarm_texture = { "assets/set-alarm.png", 10 };
+    if (!clock_data.textures_loaded)
+    {
+        TextureSet toggle_texture = { "assets/alarm.png", 10 };
+        TextureSet alarm_texture = { "assets/set-alarm.png", 10 };
 
-    clock_data.alarm_button = create_button(get_current_width() / 2, 0, 100, 100, WHITE, &alarm_texture);
-    clock_data.snooze_button = create_button(get_current_width() / 2, (float) (get_current_height() / 1.5), 600, 50, DARKBLUE, NULL);
-    clock_data.toggle_button = create_button(0, (float) (get_current_height() / 1.5), 100, 100, RED, &toggle_texture);
+        clock_data.alarm_button = create_button(get_current_width() / 2, 0, 100, 100, WHITE, &alarm_texture);
+        clock_data.snooze_button = create_button(get_current_width() / 2, (float) (get_current_height() / 1.5), 600, 50, DARKBLUE, NULL);
+        clock_data.toggle_button = create_button(0, (float) (get_current_height() / 1.5), 100, 100, RED, &toggle_texture);
+
+        clock_data.textures_loaded = 1;
+    }
+
 }
