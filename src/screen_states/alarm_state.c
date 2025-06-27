@@ -102,15 +102,15 @@ void transition_to_alarm(ScreenStatePtr state)
 
     alarm_data.hour_button_dec = create_button((float) width / 2 - (center.x / 3.25),
                                                (float) height / 2 + (center.y / 2),
-                                               50, 50, BLUE);
+                                               50, 50, BLUE, NULL);
     alarm_data.hour_button_inc = create_button((float) width / 2 - (center.x / 3.25),
                                                (float) height / 2 - (center.y / 1.25),
-                                               50, 50, BLUE);
+                                               50, 50, BLUE, NULL);
 
     alarm_data.minute_button_dec = create_button((float) width / 2 + (center.x / 3.25),
                                                  (float) height / 2 + (center.y / 2),
-                                                 50, 50, BLUE);
+                                                 50, 50, BLUE, NULL);
     alarm_data.minute_button_inc = create_button((float) width / 2 + (center.x / 3.25),
                                                  (float) height / 2 - (center.y / 1.25),
-                                                 50, 50, BLUE);
+                                                 50, 50, BLUE, NULL);
 }

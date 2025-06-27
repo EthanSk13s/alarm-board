@@ -3,7 +3,7 @@
 #include "button.h"
 #include "info_storage.h"
 
-struct Button create_button(int pos_x, int pos_y, int width, int height, Color color)
+struct Button create_button(int pos_x, int pos_y, int width, int height, Color color, TextureSet* opt_texture)
 {
     struct Button btn = { };
     btn.is_pressed = false;
@@ -11,6 +11,15 @@ struct Button create_button(int pos_x, int pos_y, int width, int height, Color c
     Rectangle btn_bounds = {pos_x, pos_y, width, height};
     btn.bounds = btn_bounds;
     btn.color = color;
+
+    if (opt_texture != NULL)
+    {
+        Image image = LoadImage(opt_texture->texture_path);
+        Texture2D texture = LoadTextureFromImage(image);
+        UnloadImage(image);
+
+        btn.texture = texture;
+    }
 
     return btn;
 }
@@ -22,7 +31,14 @@ void update_button_pos_x(struct Button* button, int pos_x)
 
 void draw_button(struct Button* button)
 {
-    DrawRectangleRec(button->bounds, button->color);
+    if (!IsTextureValid(button->texture))
+    {
+        DrawRectangleRec(button->bounds, button->color);
+    } else
+    {
+        Vector2 texture_pos = {button->bounds.x, button->bounds.y};
+        DrawTextureEx(button->texture, texture_pos, 0, 10, button->color);
+    }
 }
 
 int check_pressed(struct Button* button)

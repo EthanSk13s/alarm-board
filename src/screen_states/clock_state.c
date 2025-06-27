@@ -9,6 +9,8 @@
 #include "../button.h"
 #include "../info_storage.h"
 #include "../alarm.h"
+#include "../utils.h"
+
 #include "screen_state.h"
 #include "clock_state.h"
 
@@ -121,7 +123,10 @@ void transition_to_clock(ScreenStatePtr state)
     struct tm alarm_tm = get_alarm();
     strftime(clock_data.alarm_cmp, 26, "%H:%M", &alarm_tm);
 
-    clock_data.alarm_button = create_button(get_current_width() / 2, 0, 100, 100, WHITE);
-    clock_data.snooze_button = create_button(get_current_width() / 2, (float) (get_current_height() / 1.5), 600, 50, DARKBLUE);
-    clock_data.toggle_button = create_button(0, (float) (get_current_height() / 1.5), 100, 100, MAROON);
+    TextureSet toggle_texture = { "assets/alarm.png", 10 };
+    TextureSet alarm_texture = { "assets/set-alarm.png", 10 };
+
+    clock_data.alarm_button = create_button(get_current_width() / 2, 0, 100, 100, WHITE, &alarm_texture);
+    clock_data.snooze_button = create_button(get_current_width() / 2, (float) (get_current_height() / 1.5), 600, 50, DARKBLUE, NULL);
+    clock_data.toggle_button = create_button(0, (float) (get_current_height() / 1.5), 100, 100, RED, &toggle_texture);
 }
