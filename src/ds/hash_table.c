@@ -171,7 +171,10 @@ const char* ht_set(ht* table, const char* key, void* value)
 
     if (table->length >= table->capacity / 2)
     {
-        // TODO: Expand table.
+        if (!ht_expand(table))
+        {
+            return NULL;
+        }
     }
 
     return set_entry(table->entries, table->capacity, key, value, &table->length);
