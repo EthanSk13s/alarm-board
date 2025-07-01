@@ -1,6 +1,6 @@
 EXEC_NAME=rayalarm
 CC=gcc
-CFLAGS=-lraylib -lGL -lm -lpthread -ldl -lrt -lX11
+CFLAGS=-lraylib -lGL -lm -lpthread -ldl -lrt -lX11 -lpigpio
 BUILD_PATH= ./build
 SRC_DIR = ./src
 
