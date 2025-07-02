@@ -44,8 +44,11 @@ void VEML7700_set_integ_time(uint8_t integ_time);
 void VEML7700_enable_interrupt(uint8_t toggle);
 void VEML7700_set_power_save(uint8_t mode);
 
+float VEML7700_get_gain(uint8_t gain);
+int VEML7700_get_integ_time(uint16_t integ_time);
+
 void VEML7700_close();
 
-float VEML7700_read_lux();
+float VEML7700_read_lux(int correction);
 
 #endif
