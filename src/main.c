@@ -1,11 +1,14 @@
-#include <stdio.h>
+#include "stdio.h"
 #include <stdlib.h>
 #include "alarm.h"
 #include "renderer.h"
 #include "screen_man.h"
 #include "raylib.h"
+#include <pigpio.h>
 
 #include "info_storage.h"
+#include "brightness/sensor/VEML7700_pigpio.h"
+#include "texture_man.h"
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -22,18 +25,29 @@ int main(void)
     InitWindow(screenWidth, screenHeight, "rayalarm");
     SetWindowState(flags);
     InitAudioDevice();              // Initialize audio device
+    int result = gpioInitialise();
 
     if (load_alarm() == 0)
     {
         return 1;
     }
 
+    if (result >= 0)
+    {
+        VEML7700_setup();
+    }
+
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
 
     Renderer* renderer = malloc(sizeof(Renderer));
+    TextureManager* texture_man = texture_manager_create();
+    texture_manager_add(texture_man, "alarm", "assets/alarm.png");
+    texture_manager_add(texture_man, "set-alarm", "assets/set-alarm.png");
+    texture_manager_add(texture_man, "alarm-arrow", "assets/alarm-arrow.png");
+
     init_renderer(renderer, screenWidth, screenHeight);
-    init_storage(renderer);
+    init_storage(renderer, texture_man);
 
     ScreenManager* screen_man = init_screen_man();
     if (screen_man == NULL)
@@ -53,6 +67,7 @@ int main(void)
         {
             update_game_screen(renderer);
         }
+        //printf("%f\n", VEML7700_read_lux(1));
 
         screen_man->state.update(&screen_man->state);
 
@@ -63,6 +78,12 @@ int main(void)
     // De-Initialization
     //--------------------------------------------------------------------------------------
     free_renderer(renderer);
+    free_texture_manager(texture_man);
+
+    if (result >= 0)
+    {
+        VEML7700_close();
+    }
     CloseWindow();        // Close window and OpenGL context
     //--------------------------------------------------------------------------------------
 
