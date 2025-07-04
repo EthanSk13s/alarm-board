@@ -5,7 +5,7 @@
 
 typedef struct
 {
-    char* texture_path;
+    Texture2D* texture;
     float scale;
 }  TextureSet;
 

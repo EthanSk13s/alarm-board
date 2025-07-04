@@ -9,7 +9,8 @@ struct Button
     int is_pressed;
     Rectangle bounds;
     Color color;
-    Texture texture;
+    Texture2D* texture;
+    int scale;
 };
 
 struct Button create_button(int pos_x, int pos_y, int width, int height, Color color, TextureSet* opt_texture);

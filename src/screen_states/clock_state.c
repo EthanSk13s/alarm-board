@@ -1,7 +1,6 @@
 #include <stdbool.h>
 #include <string.h>
 #include <time.h>
-#include <stdio.h>
 
 #include "alarm_state.h"
 #include "raylib.h"
@@ -112,6 +111,16 @@ static void clock_draw(ScreenStatePtr state)
     {
         draw_button(&clock_data.snooze_button);
     }
+
+    // Note: Temporary status toggle.
+    if (clock_data.toggle_button.is_pressed)
+    {
+        DrawRectangle(100,
+                      (float) (get_current_height() / 1.5),
+                      10,
+                      10,
+                      RED);
+    }
 }
 
 void transition_to_clock(ScreenStatePtr state)
@@ -126,12 +135,29 @@ void transition_to_clock(ScreenStatePtr state)
 
     if (!clock_data.textures_loaded)
     {
-        TextureSet toggle_texture = { "assets/alarm.png", 10 };
-        TextureSet alarm_texture = { "assets/set-alarm.png", 10 };
+        Texture2D* alarm_texture = texture_manager_get(get_texture_man(), "alarm");
+        Texture2D* toggle_texture = texture_manager_get(get_texture_man(), "set-alarm");
 
-        clock_data.alarm_button = create_button(get_current_width() / 2, 0, 100, 100, WHITE, &alarm_texture);
-        clock_data.snooze_button = create_button(get_current_width() / 2, (float) (get_current_height() / 1.5), 600, 50, DARKBLUE, NULL);
-        clock_data.toggle_button = create_button(0, (float) (get_current_height() / 1.5), 100, 100, RED, &toggle_texture);
+        TextureSet toggle_texture_opts = { toggle_texture, 10 };
+        TextureSet alarm_texture_opts = { alarm_texture, 10 };
+
+        clock_data.alarm_button = create_button(get_current_width() - 180,
+                                                (float) (get_current_height() / 1.5),
+                                                100,
+                                                100,
+                                                WHITE,
+                                                &alarm_texture_opts);
+        clock_data.snooze_button = create_button(get_current_width() / 2,
+                                                 (float) (get_current_height() / 1.5),
+                                                 600, 50,
+                                                 DARKBLUE,
+                                                 NULL);
+        clock_data.toggle_button = create_button(0,
+                                                 (float) (get_current_height() / 1.5),
+                                                 100,
+                                                 100,
+                                                 RED,
+                                                 &toggle_texture_opts);
 
         clock_data.textures_loaded = 1;
     }

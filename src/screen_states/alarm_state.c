@@ -1,5 +1,6 @@
 #include <time.h>
 #include <raylib.h>
+#include <stdio.h>
 
 #include "alarm_state.h"
 #include "clock_state.h"
@@ -10,6 +11,7 @@
 struct AlarmData
 {
     char alarm[6];
+    int textures_loaded;
     struct tm alarm_tm;
     struct Button hour_button_dec;
     struct Button hour_button_inc;
@@ -100,17 +102,23 @@ void transition_to_alarm(ScreenStatePtr state)
     int width = get_current_width();
     int height = get_current_height();
 
-    alarm_data.hour_button_dec = create_button((float) width / 2 - (center.x / 3.25),
-                                               (float) height / 2 + (center.y / 2),
-                                               50, 50, BLUE, NULL);
-    alarm_data.hour_button_inc = create_button((float) width / 2 - (center.x / 3.25),
-                                               (float) height / 2 - (center.y / 1.25),
-                                               50, 50, BLUE, NULL);
+    if (!alarm_data.textures_loaded)
+    {
+        Texture2D* arrow_texture = texture_manager_get(get_texture_man(), "alarm-arrow");
+        TextureSet arrow_texture_opts = { arrow_texture, 2 };
 
-    alarm_data.minute_button_dec = create_button((float) width / 2 + (center.x / 3.25),
-                                                 (float) height / 2 + (center.y / 2),
-                                                 50, 50, BLUE, NULL);
-    alarm_data.minute_button_inc = create_button((float) width / 2 + (center.x / 3.25),
-                                                 (float) height / 2 - (center.y / 1.25),
-                                                 50, 50, BLUE, NULL);
+        alarm_data.hour_button_dec = create_button((float) width / 2 - (center.x / 3.25),
+                                                (float) height / 2 + (center.y / 2),
+                                                50, 50, BLUE, &arrow_texture_opts);
+        alarm_data.hour_button_inc = create_button((float) width / 2 - (center.x / 3.25),
+                                                (float) height / 2 - (center.y / 1.25),
+                                                50, 50, BLUE, &arrow_texture_opts);
+
+        alarm_data.minute_button_dec = create_button((float) width / 2 + (center.x / 3.25),
+                                                    (float) height / 2 + (center.y / 2),
+                                                    50, 50, BLUE, &arrow_texture_opts);
+        alarm_data.minute_button_inc = create_button((float) width / 2 + (center.x / 3.25),
+                                                    (float) height / 2 - (center.y / 1.25),
+                                                    50, 50, BLUE, &arrow_texture_opts);
+    }
 }

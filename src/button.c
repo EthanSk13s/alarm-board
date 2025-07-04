@@ -14,11 +14,9 @@ struct Button create_button(int pos_x, int pos_y, int width, int height, Color c
 
     if (opt_texture != NULL)
     {
-        Image image = LoadImage(opt_texture->texture_path);
-        Texture2D texture = LoadTextureFromImage(image);
-        UnloadImage(image);
-
-        btn.texture = texture;
+        btn.texture = opt_texture->texture;
+        int scale = opt_texture->scale;
+        btn.scale = scale;
     }
 
     return btn;
@@ -31,13 +29,13 @@ void update_button_pos_x(struct Button* button, int pos_x)
 
 void draw_button(struct Button* button)
 {
-    if (!IsTextureValid(button->texture))
+    if (!IsTextureValid(*button->texture))
     {
         DrawRectangleRec(button->bounds, button->color);
     } else
     {
         Vector2 texture_pos = {button->bounds.x, button->bounds.y};
-        DrawTextureEx(button->texture, texture_pos, 0, 10, button->color);
+        DrawTextureEx(*button->texture, texture_pos, 0, button->scale, button->color);
     }
 }
 
