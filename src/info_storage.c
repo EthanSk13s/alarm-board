@@ -2,11 +2,11 @@
 #include <time.h>
 #include "info_storage.h"
 #include "renderer.h"
-
 struct InfoStorage storage;
 
-void init_storage(Renderer* renderer)
+void init_storage(Renderer* renderer, TextureManager* texture_man)
 {
+    storage.texture_man = texture_man;
     storage.renderer = renderer;
 
     storage.alarm_time.tm_hour = 0;
@@ -31,6 +31,11 @@ Vector2 get_virt_mouse()
 struct tm get_alarm()
 {
     return storage.alarm_time;
+}
+
+TextureManager* get_texture_man()
+{
+    return storage.texture_man;
 }
 
 void set_alarm_hour(int hour)
