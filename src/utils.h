@@ -5,7 +5,6 @@
 
 typedef struct
 {
-    Texture2D* texture;
     float scale;
     int rotation;
 }  TextureSet;

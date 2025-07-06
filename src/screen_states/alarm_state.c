@@ -1,10 +1,11 @@
 #include <time.h>
 #include <raylib.h>
-#include <stdio.h>
 
 #include "alarm_state.h"
 #include "clock_state.h"
 #include "screen_state.h"
+
+#include "../sprite_man.h"
 #include "../info_storage.h"
 #include "../button.h"
 
@@ -12,6 +13,7 @@ struct AlarmData
 {
     char alarm[6];
     int textures_loaded;
+    SpriteManager* sprite_manager;
     struct tm alarm_tm;
     struct Button hour_button_dec;
     struct Button hour_button_inc;
@@ -84,10 +86,7 @@ static void alarm_draw(ScreenStatePtr state)
                 ((float) get_current_width() / 2) - (center.x / 2),
                 ((float) get_current_height() / 2) - (center.y / 2),
                 CLOCK_FONT_SIZE, RED);
-    draw_button(&alarm_data.hour_button_dec);
-    draw_button(&alarm_data.hour_button_inc);
-    draw_button(&alarm_data.minute_button_inc);
-    draw_button(&alarm_data.minute_button_dec);
+    draw_sprites(alarm_data.sprite_manager);
 }
 
 void transition_to_alarm(ScreenStatePtr state)
@@ -104,21 +103,43 @@ void transition_to_alarm(ScreenStatePtr state)
 
     if (!alarm_data.textures_loaded)
     {
+        alarm_data.sprite_manager = create_sprite_manager();
         Texture2D* arrow_texture = texture_manager_get(get_texture_man(), "alarm-arrow");
-        TextureSet arrow_texture_opts = { arrow_texture, 2 };
 
-        alarm_data.hour_button_dec = create_button((float) width / 2 - (center.x / 3.25),
-                                                (float) height / 2 + (center.y / 2),
-                                                50, 50, BLUE, &arrow_texture_opts);
-        alarm_data.hour_button_inc = create_button((float) width / 2 - (center.x / 3.25),
-                                                (float) height / 2 - (center.y / 1.25),
-                                                50, 50, BLUE, &arrow_texture_opts);
-
-        alarm_data.minute_button_dec = create_button((float) width / 2 + (center.x / 3.25),
-                                                    (float) height / 2 + (center.y / 2),
-                                                    50, 50, BLUE, &arrow_texture_opts);
-        alarm_data.minute_button_inc = create_button((float) width / 2 + (center.x / 3.25),
+        TextureSet upper_opts = { 2, 0 };
+        // TODO: Rotation does not rotate the bounding box, but not the texture.
+        // Fix by switching texture rendering
+        TextureSet lower_opts = { 2, 0 };
+        Sprite* hour_btn_dec_sprite = create_sprite((float) width / 2 - (center.x / 3.25) + 34,
+                                                    (float) height / 2 + (center.y / 2) + 34,
+                                                    arrow_texture,
+                                                    lower_opts,
+                                                    BLUE);
+        Sprite* hour_btn_inc_sprite = create_sprite((float) width / 2 - (center.x / 3.25),
                                                     (float) height / 2 - (center.y / 1.25),
-                                                    50, 50, BLUE, &arrow_texture_opts);
+                                                    arrow_texture,
+                                                    upper_opts,
+                                                    BLUE);
+        Sprite* minute_btn_dec_sprite = create_sprite((float) width / 2 + (center.x / 3.25) + 34,
+                                                      (float) height / 2 + (center.y / 2) + 34,
+                                                      arrow_texture,
+                                                      lower_opts,
+                                                      BLUE);
+        Sprite* minute_btn_inc_sprite = create_sprite((float) width / 2 + (center.x / 3.25),
+                                                      (float) height / 2 - (center.y / 1.25),
+                                                      arrow_texture,
+                                                      upper_opts,
+                                                      BLUE);
+
+        add_to_sprite_manager(alarm_data.sprite_manager, hour_btn_dec_sprite);
+        add_to_sprite_manager(alarm_data.sprite_manager, hour_btn_inc_sprite);
+        add_to_sprite_manager(alarm_data.sprite_manager, minute_btn_dec_sprite);
+        add_to_sprite_manager(alarm_data.sprite_manager, minute_btn_inc_sprite);
+
+        alarm_data.hour_button_dec = create_button(hour_btn_dec_sprite);
+        alarm_data.hour_button_inc = create_button(hour_btn_inc_sprite);
+
+        alarm_data.minute_button_dec = create_button(minute_btn_dec_sprite);
+        alarm_data.minute_button_inc = create_button(minute_btn_inc_sprite);
     }
 }

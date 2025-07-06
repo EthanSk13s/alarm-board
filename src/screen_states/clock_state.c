@@ -9,6 +9,8 @@
 #include "../info_storage.h"
 #include "../alarm.h"
 #include "../utils.h"
+#include "../sprite.h"
+#include "../sprite_man.h"
 
 #include "screen_state.h"
 #include "clock_state.h"
@@ -21,6 +23,7 @@ struct ClockData
     struct Button alarm_button;
     struct Button toggle_button;
     struct Button snooze_button;
+    SpriteManager* sprite_manager;
     char clock[26];
     char alarm_cmp[26];
 };
@@ -103,14 +106,15 @@ static void clock_draw(ScreenStatePtr state)
     DrawText(clock_data.clock,
                 ((float) get_current_width() / 2) - (center.x / 2),
                 ((float) get_current_height() / 2) - (center.y / 2), CLOCK_FONT_SIZE, RED);
+    
+    draw_sprites(clock_data.sprite_manager);
 
-    draw_button(&clock_data.alarm_button);
-    draw_button(&clock_data.toggle_button);
-
+    /*
     if (clock_data.play_alarm == 1)
     {
         draw_button(&clock_data.snooze_button);
     }
+    */
 
     // Note: Temporary status toggle.
     if (clock_data.toggle_button.is_pressed)
@@ -135,29 +139,28 @@ void transition_to_clock(ScreenStatePtr state)
 
     if (!clock_data.textures_loaded)
     {
+        clock_data.sprite_manager = create_sprite_manager();
         Texture2D* alarm_texture = texture_manager_get(get_texture_man(), "alarm");
         Texture2D* toggle_texture = texture_manager_get(get_texture_man(), "set-alarm");
 
-        TextureSet toggle_texture_opts = { toggle_texture, 10 };
-        TextureSet alarm_texture_opts = { alarm_texture, 10 };
+        TextureSet alarm_toggle_texture_opts = { 10 , 0};
 
-        clock_data.alarm_button = create_button(get_current_width() - 180,
-                                                (float) (get_current_height() / 1.5),
-                                                100,
-                                                100,
-                                                WHITE,
-                                                &alarm_texture_opts);
-        clock_data.snooze_button = create_button(get_current_width() / 2,
-                                                 (float) (get_current_height() / 1.5),
-                                                 600, 50,
-                                                 DARKBLUE,
-                                                 NULL);
-        clock_data.toggle_button = create_button(0,
-                                                 (float) (get_current_height() / 1.5),
-                                                 100,
-                                                 100,
-                                                 RED,
-                                                 &toggle_texture_opts);
+        Sprite* alarm_sprite = create_sprite(get_current_width() - 180,
+                                        (get_current_height() / 1.5),
+                                        alarm_texture,
+                                        alarm_toggle_texture_opts,
+                                        WHITE);
+        Sprite* toggle_sprite = create_sprite(0,
+                                              (float) (get_current_height() / 1.5),
+                                              toggle_texture,
+                                              alarm_toggle_texture_opts,
+                                              RED);
+        
+        add_to_sprite_manager(clock_data.sprite_manager, alarm_sprite);
+        add_to_sprite_manager(clock_data.sprite_manager, toggle_sprite);
+        clock_data.alarm_button = create_button(alarm_sprite);
+        clock_data.snooze_button = create_button(NULL);
+        clock_data.toggle_button = create_button(toggle_sprite);
 
         clock_data.textures_loaded = 1;
     }
