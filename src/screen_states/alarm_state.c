@@ -107,11 +107,10 @@ void transition_to_alarm(ScreenStatePtr state)
         Texture2D* arrow_texture = texture_manager_get(get_texture_man(), "alarm-arrow");
 
         TextureSet upper_opts = { 2, 0 };
-        // TODO: Rotation does not rotate the bounding box, but not the texture.
-        // Fix by switching texture rendering
-        TextureSet lower_opts = { 2, 0 };
-        Sprite* hour_btn_dec_sprite = create_sprite((float) width / 2 - (center.x / 3.25) + 34,
-                                                    (float) height / 2 + (center.y / 2) + 34,
+        TextureSet lower_opts = { 2, 180 };
+
+        Sprite* hour_btn_dec_sprite = create_sprite((float) width / 2 - (center.x / 3.25),
+                                                    (float) height / 2 + (center.y / 2),
                                                     arrow_texture,
                                                     lower_opts,
                                                     BLUE);
@@ -120,8 +119,8 @@ void transition_to_alarm(ScreenStatePtr state)
                                                     arrow_texture,
                                                     upper_opts,
                                                     BLUE);
-        Sprite* minute_btn_dec_sprite = create_sprite((float) width / 2 + (center.x / 3.25) + 34,
-                                                      (float) height / 2 + (center.y / 2) + 34,
+        Sprite* minute_btn_dec_sprite = create_sprite((float) width / 2 + (center.x / 3.25),
+                                                      (float) height / 2 + (center.y / 2),
                                                       arrow_texture,
                                                       lower_opts,
                                                       BLUE);

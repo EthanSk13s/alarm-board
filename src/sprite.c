@@ -42,7 +42,17 @@ void draw_sprite(Sprite* sprite)
 
     float scale = sprite->texture_opts.scale;
     float rotation = sprite->texture_opts.rotation;
-    Vector2 position = {sprite->bounds.x, sprite->bounds.y};
+    Rectangle dest = sprite->bounds;
+    Vector2 origin = {0, 0};
+    if (rotation != 0)
+    {
+        origin.x = sprite->bounds.width / 2.f;
+        origin.y = sprite->bounds.height / 2.f;
 
-    DrawTextureEx(*sprite->texture, position, rotation, scale, sprite->color);
+        dest.x += origin.x;
+        dest.y += origin.y;
+    }
+    Rectangle src = { 0, 0, sprite->bounds.width / scale, sprite->bounds.height / scale};
+
+    DrawTexturePro(*sprite->texture, src, dest, origin, rotation, sprite->color);
 }
