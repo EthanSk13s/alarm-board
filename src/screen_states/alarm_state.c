@@ -51,6 +51,10 @@ static void alarm_update(ScreenStatePtr state)
         if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
         {
             int dec = alarm_data.alarm_tm.tm_hour - 1;
+            if (dec <= -1)
+            {
+                dec = 23;
+            }
             set_alarm_hour(dec);
             update_alarm();
         }
@@ -71,6 +75,10 @@ static void alarm_update(ScreenStatePtr state)
         if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
         {
             int dec = alarm_data.alarm_tm.tm_min - 1;
+            if (dec <= -1)
+            {
+                dec = 59;
+            }
             set_alarm_min(dec);
             update_alarm();
         }
