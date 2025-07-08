@@ -10,6 +10,7 @@ typedef struct
     Texture2D* texture;
     TextureSet texture_opts;
     Color color;
+    int visible;
 } Sprite;
 
 Sprite* create_sprite(float x, float y, Texture2D* texture, TextureSet texture_opts, Color color);

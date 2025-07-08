@@ -49,7 +49,32 @@ void draw_sprites(SpriteManager* sprite_manager)
     {
         if (sprite_manager->sprites[i] != NULL)
         {
-            draw_sprite(sprite_manager->sprites[i]);
+            if (sprite_manager->sprites[i]->visible)
+            {
+                draw_sprite(sprite_manager->sprites[i]);
+            }
+
         }
+    }
+}
+
+void toggle_sprite_visibility(SpriteManager* sprite_manager, int id)
+{
+    if (sprite_manager->capacity <= id)
+    {
+        return;
+    }
+
+    if (sprite_manager->sprites[id] == NULL)
+    {
+        return;
+    }
+
+    if (sprite_manager->sprites[id]->visible)
+    {
+        sprite_manager->sprites[id]->visible = 0;
+    } else
+    {
+        sprite_manager->sprites[id]->visible = 1;
     }
 }

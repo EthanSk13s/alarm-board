@@ -20,6 +20,7 @@ Sprite* create_sprite(float x, float y, Texture2D* texture, TextureSet texture_o
     sprite->texture = texture;
     sprite->texture_opts = texture_opts;
     sprite->color = color;
+    sprite->visible = 1;
 
     return sprite;
 }
@@ -35,7 +36,12 @@ void free_sprite(Sprite *sprite)
 
 void draw_sprite(Sprite* sprite)
 {
-    if (sprite == NULL || sprite->texture == NULL)
+    if (sprite == NULL)
+    {
+        return;
+    }
+
+    if (sprite->texture == NULL)
     {
         return;
     }
