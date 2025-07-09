@@ -1,13 +1,15 @@
-#include "stdio.h"
 #include <stdlib.h>
+#include <raylib.h>
+#include <pigpio.h>
+#include <pthread.h>
+#include <time.h>
+
 #include "alarm.h"
 #include "renderer.h"
 #include "screen_man.h"
-#include "raylib.h"
-#include <pigpio.h>
-
 #include "info_storage.h"
 #include "brightness/sensor/VEML7700_pigpio.h"
+#include "brightness/brightness_ctrl.h"
 #include "texture_man.h"
 
 //------------------------------------------------------------------------------------
@@ -32,9 +34,11 @@ int main(void)
         return 1;
     }
 
+    pthread_t brightness_thread;
     if (result >= 0)
     {
         VEML7700_setup();
+        pthread_create(&brightness_thread, NULL, brightness_ctrl_thread, NULL);
     }
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
@@ -83,8 +87,11 @@ int main(void)
 
     if (result >= 0)
     {
+        brightness_kill_thread();
+        pthread_join(brightness_thread, NULL);
         VEML7700_close();
     }
+
     CloseWindow();        // Close window and OpenGL context
     //--------------------------------------------------------------------------------------
 
