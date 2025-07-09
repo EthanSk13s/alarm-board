@@ -37,8 +37,11 @@ int main(void)
     pthread_t brightness_thread;
     if (result >= 0)
     {
-        VEML7700_setup();
-        pthread_create(&brightness_thread, NULL, brightness_ctrl_thread, NULL);
+        result = VEML7700_setup();
+        if (result > -1)
+        {
+            pthread_create(&brightness_thread, NULL, brightness_ctrl_thread, NULL);
+        }
     }
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
