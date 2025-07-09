@@ -42,7 +42,7 @@ static void clock_update(ScreenStatePtr state)
 
     if (check_pressed(&clock_data.alarm_button))
     {
-        if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT) || IsGestureDetected(GESTURE_TAP))
+        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) || IsGestureDetected(GESTURE_TAP))
         {
             clock_data.alarm_button.is_pressed = true;
         }
@@ -81,8 +81,8 @@ static void clock_update(ScreenStatePtr state)
 
     if (clock_data.alarm_button.is_pressed)
     {
-        transition_to_alarm(state);
         clock_data.alarm_button.is_pressed = false;
+        transition_to_alarm(state);
     }
 
     if (clock_data.toggle_button.is_pressed)

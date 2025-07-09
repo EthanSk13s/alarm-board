@@ -40,7 +40,7 @@ int main(void)
         result = VEML7700_setup();
         if (result > -1)
         {
-            pthread_create(&brightness_thread, NULL, brightness_ctrl_thread, NULL);
+            pthread_create(&brightness_thread, NULL, (void*) brightness_ctrl_thread, NULL);
         }
     }
 
@@ -53,6 +53,7 @@ int main(void)
     texture_manager_add(texture_man, "set-alarm", "assets/set-alarm.png");
     texture_manager_add(texture_man, "alarm-arrow", "assets/alarm-arrow.png");
     texture_manager_add(texture_man, "snooze", "assets/snooze.png");
+    texture_manager_add(texture_man, "clock", "assets/clock.png");
 
     init_renderer(renderer, screenWidth, screenHeight);
     init_storage(renderer, texture_man);
