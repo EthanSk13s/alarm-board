@@ -26,5 +26,5 @@ int check_pressed(struct Button* button)
 {
     Vector2 mouse_point = get_virt_mouse();
 
-    return CheckCollisionPointRec(mouse_point, button->sprite->bounds);
+    return CheckCollisionPointRec(mouse_point, button->sprite->bounds) && button->sprite->visible;
 }
