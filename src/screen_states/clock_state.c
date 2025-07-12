@@ -10,10 +10,12 @@
 #include "../utils.h"
 #include "../sprite.h"
 #include "../sprite_man.h"
+#include "../timer.h"
 
 #include "screen_state.h"
 #include "clock_state.h"
 
+#define SNOOZE_TIME 600.0
 
 struct ClockData
 {
@@ -23,6 +25,7 @@ struct ClockData
     struct Button toggle_button;
     struct Button snooze_button;
     SpriteManager* sprite_manager;
+    Timer snooze_timer;
     int snooze_id;
     char clock[26];
     char alarm_cmp[26];
@@ -55,6 +58,7 @@ static void clock_update(ScreenStatePtr state)
             if (clock_data.toggle_button.is_pressed)
             {
                 clock_data.toggle_button.is_pressed = false;
+                clock_data.snooze_button.is_pressed = false;
                 clock_data.play_alarm = 0;
 
                 if (is_alarm_playing())
@@ -71,12 +75,19 @@ static void clock_update(ScreenStatePtr state)
 
     if (check_pressed(&clock_data.snooze_button))
     {
-        if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT) || IsGestureDetected(GESTURE_TAP))
+        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) || IsGestureDetected(GESTURE_TAP))
         {
-            clock_data.snooze_button.is_pressed = false;
+            clock_data.snooze_button.is_pressed = true;
             clock_data.play_alarm = 0;
-            // TODO: Wait for 10 Minutes and play alarm again.
+            timer_start(&clock_data.snooze_timer, SNOOZE_TIME);
+            stop_alarm();
+            toggle_sprite_visibility(clock_data.sprite_manager, clock_data.snooze_id);
         }
+    }
+
+    if (timer_done(clock_data.snooze_timer) && !clock_data.play_alarm && clock_data.snooze_button.is_pressed)
+    {
+        clock_data.play_alarm = 1;
     }
 
     if (clock_data.alarm_button.is_pressed)
@@ -87,9 +98,12 @@ static void clock_update(ScreenStatePtr state)
 
     if (clock_data.toggle_button.is_pressed)
     {
-        if (strcmp(clock_data.clock, clock_data.alarm_cmp) == 0 && clock_data.play_alarm == 0)
+        if (!clock_data.snooze_button.is_pressed)
         {
-            clock_data.play_alarm = 1;
+            if (strcmp(clock_data.clock, clock_data.alarm_cmp) == 0 && clock_data.play_alarm == 0)
+            {
+                clock_data.play_alarm = 1;
+            }
         }
 
         if (clock_data.play_alarm && !is_alarm_playing())
@@ -175,7 +189,7 @@ void transition_to_clock(ScreenStatePtr state)
 
         toggle_sprite_visibility(clock_data.sprite_manager, clock_data.snooze_id);
         clock_data.alarm_button = create_button(alarm_sprite);
-        clock_data.snooze_button = create_button(NULL);
+        clock_data.snooze_button = create_button(snooze_sprite);
         clock_data.toggle_button = create_button(toggle_sprite);
 
         clock_data.textures_loaded = 1;
