@@ -5,12 +5,16 @@
 #include <time.h>
 
 #include "alarm.h"
+#include "cfg.h"
+#include "ds/hash_table.h"
 #include "renderer.h"
 #include "screen_man.h"
 #include "info_storage.h"
 #include "brightness/sensor/VEML7700_pigpio.h"
 #include "brightness/brightness_ctrl.h"
 #include "texture_man.h"
+
+#define CFG_LOCATION "./config"
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -64,6 +68,19 @@ int main(void)
         return 1;
     }
 
+    ht* cfg_map = ht_create();
+    int parse_result = cfg_parse(cfg_map, CFG_LOCATION);
+    if (parse_result == -1)
+    {
+        return 1;
+    }
+
+    parse_result = cfg_load(cfg_map);
+    if (parse_result == -1)
+    {
+        return 1;
+    }
+
     // Main game loop
     while (!WindowShouldClose())    // Detect window close button or ESC key
     {
@@ -95,6 +112,8 @@ int main(void)
         pthread_join(brightness_thread, NULL);
         VEML7700_close();
     }
+
+    cfg_save(CFG_LOCATION);
 
     CloseWindow();        // Close window and OpenGL context
     //--------------------------------------------------------------------------------------

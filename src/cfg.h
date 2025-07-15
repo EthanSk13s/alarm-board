@@ -9,4 +9,6 @@
 #include "ds/hash_table.h"
 
 int cfg_parse(ht* cfg_map, char* file_path);
+int cfg_load(ht* cfg_map);
+int cfg_save(char* file_ptr);
 #endif
