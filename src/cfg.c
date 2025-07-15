@@ -95,4 +95,6 @@ int cfg_save(char* file_ptr)
     sprintf(buf, "ALARM=%d:%d", alarm.tm_hour, alarm.tm_min);
     fputs(buf, cfg_file);
     fclose(cfg_file);
+
+    return 0;
 }
