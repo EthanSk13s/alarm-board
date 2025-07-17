@@ -24,6 +24,13 @@ struct AlarmData
 
 static struct AlarmData alarm_data;
 
+// Button callbacks
+static void clock_btn_callback();
+static void hour_btn_inc_callback();
+static void hour_btn_dec_callback();
+static void min_btn_inc_callback();
+static void min_btn_dec_callback();
+
 static void update_alarm()
 {
     alarm_data.alarm_tm = get_alarm();
@@ -32,61 +39,11 @@ static void update_alarm()
 
 static void alarm_update(ScreenStatePtr state)
 {
-    if (IsKeyPressed(KEY_A) || check_pressed(&alarm_data.clock_button))
-    {
-        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) || IsGestureDetected(GESTURE_TAP))
-        {
-            alarm_data.clock_button.is_pressed = true;
-        }
-    }
-
-    if (check_pressed(&alarm_data.hour_button_inc))
-    {
-        if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
-        {
-            int inc = alarm_data.alarm_tm.tm_hour + 1;
-            set_alarm_hour(inc);
-            update_alarm();
-        }
-    }
-
-    if (check_pressed(&alarm_data.hour_button_dec))
-    {
-        if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
-        {
-            int dec = alarm_data.alarm_tm.tm_hour - 1;
-            if (dec <= -1)
-            {
-                dec = 23;
-            }
-            set_alarm_hour(dec);
-            update_alarm();
-        }
-    }
-
-    if (check_pressed(&alarm_data.minute_button_inc))
-    {
-        if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
-        {
-            int inc = alarm_data.alarm_tm.tm_min + 1;
-            set_alarm_min(inc);
-            update_alarm();
-        }
-    }
-
-    if (check_pressed(&alarm_data.minute_button_dec))
-    {
-        if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
-        {
-            int dec = alarm_data.alarm_tm.tm_min - 1;
-            if (dec <= -1)
-            {
-                dec = 59;
-            }
-            set_alarm_min(dec);
-            update_alarm();
-        }
-    }
+    check_pressed(&alarm_data.clock_button);
+    check_pressed(&alarm_data.hour_button_inc);
+    check_pressed(&alarm_data.hour_button_dec);
+    check_pressed(&alarm_data.minute_button_inc);
+    check_pressed(&alarm_data.minute_button_dec);
 
     if (alarm_data.clock_button.is_pressed)
     {
@@ -161,12 +118,58 @@ void transition_to_alarm(ScreenStatePtr state)
         add_to_sprite_manager(alarm_data.sprite_manager, minute_btn_inc_sprite);
         add_to_sprite_manager(alarm_data.sprite_manager, clock_sprite);
 
-        alarm_data.hour_button_dec = create_button(hour_btn_dec_sprite);
-        alarm_data.hour_button_inc = create_button(hour_btn_inc_sprite);
+        alarm_data.hour_button_dec = create_button(hour_btn_dec_sprite,
+                                                   hour_btn_dec_callback);
+        alarm_data.hour_button_inc = create_button(hour_btn_inc_sprite,
+                                                   hour_btn_inc_callback);
 
-        alarm_data.minute_button_dec = create_button(minute_btn_dec_sprite);
-        alarm_data.minute_button_inc = create_button(minute_btn_inc_sprite);
+        alarm_data.minute_button_dec = create_button(minute_btn_dec_sprite,
+                                                     min_btn_dec_callback);
+        alarm_data.minute_button_inc = create_button(minute_btn_inc_sprite,
+                                                     min_btn_inc_callback);
 
-        alarm_data.clock_button = create_button(clock_sprite);
+        alarm_data.clock_button = create_button(clock_sprite,
+                                                clock_btn_callback);
     }
+}
+
+static void clock_btn_callback()
+{
+    alarm_data.clock_button.is_pressed = true;
+}
+
+static void hour_btn_inc_callback()
+{
+    int inc = alarm_data.alarm_tm.tm_hour + 1;
+    set_alarm_hour(inc);
+    update_alarm();
+}
+
+static void hour_btn_dec_callback()
+{
+    int dec = alarm_data.alarm_tm.tm_hour - 1;
+    if (dec <= -1)
+    {
+        dec = 23;
+    }
+    set_alarm_hour(dec);
+    update_alarm();
+}
+
+static void min_btn_inc_callback()
+{
+    int inc = alarm_data.alarm_tm.tm_min + 1;
+    set_alarm_min(inc);
+    update_alarm();
+}
+
+static void min_btn_dec_callback()
+{
+    int dec = alarm_data.alarm_tm.tm_min - 1;
+    if (dec <= -1)
+    {
+        dec = 59;
+    }
+    set_alarm_min(dec);
+    update_alarm();
 }

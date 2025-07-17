@@ -33,6 +33,11 @@ struct ClockData
 
 static struct ClockData clock_data;
 
+// Button callbacks
+static void toggle_btn_callback();
+static void alarm_btn_callback();
+static void snooze_btn_callback();
+
 static void clock_update(ScreenStatePtr state)
 {
     time_t timer;
@@ -42,48 +47,9 @@ static void clock_update(ScreenStatePtr state)
     tm_info = localtime(&timer);
 
     strftime(clock_data.clock, 26, "%H:%M", tm_info);
-
-    if (check_pressed(&clock_data.alarm_button))
-    {
-        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) || IsGestureDetected(GESTURE_TAP))
-        {
-            clock_data.alarm_button.is_pressed = true;
-        }
-    }
-
-    if (check_pressed(&clock_data.toggle_button))
-    {
-        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) || IsGestureDetected(GESTURE_TAP))
-        {
-            if (clock_data.toggle_button.is_pressed)
-            {
-                clock_data.toggle_button.is_pressed = false;
-                clock_data.snooze_button.is_pressed = false;
-                clock_data.play_alarm = 0;
-
-                if (is_alarm_playing())
-                {
-                    toggle_sprite_visibility(clock_data.sprite_manager, clock_data.snooze_id);
-                    stop_alarm();
-                }
-            } else
-            {
-                clock_data.toggle_button.is_pressed = true;
-            }
-        }
-    }
-
-    if (check_pressed(&clock_data.snooze_button))
-    {
-        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) || IsGestureDetected(GESTURE_TAP))
-        {
-            clock_data.snooze_button.is_pressed = true;
-            clock_data.play_alarm = 0;
-            timer_start(&clock_data.snooze_timer, SNOOZE_TIME);
-            stop_alarm();
-            toggle_sprite_visibility(clock_data.sprite_manager, clock_data.snooze_id);
-        }
-    }
+    check_pressed(&clock_data.alarm_button);
+    check_pressed(&clock_data.toggle_button);
+    check_pressed(&clock_data.snooze_button);
 
     if (timer_done(clock_data.snooze_timer) && !clock_data.play_alarm && clock_data.snooze_button.is_pressed)
     {
@@ -188,11 +154,43 @@ void transition_to_clock(ScreenStatePtr state)
                                                      snooze_sprite);
 
         toggle_sprite_visibility(clock_data.sprite_manager, clock_data.snooze_id);
-        clock_data.alarm_button = create_button(alarm_sprite);
-        clock_data.snooze_button = create_button(snooze_sprite);
-        clock_data.toggle_button = create_button(toggle_sprite);
+        clock_data.alarm_button = create_button(alarm_sprite, alarm_btn_callback);
+        clock_data.snooze_button = create_button(snooze_sprite, snooze_btn_callback);
+        clock_data.toggle_button = create_button(toggle_sprite, toggle_btn_callback);
 
         clock_data.textures_loaded = 1;
     }
+}
 
+static void toggle_btn_callback()
+{
+    if (clock_data.toggle_button.is_pressed)
+    {
+        clock_data.toggle_button.is_pressed = false;
+        clock_data.snooze_button.is_pressed = false;
+        clock_data.play_alarm = 0;
+
+        if (is_alarm_playing())
+        {
+            toggle_sprite_visibility(clock_data.sprite_manager, clock_data.snooze_id);
+            stop_alarm();
+        }
+    } else
+    {
+        clock_data.toggle_button.is_pressed = true;
+    }
+}
+
+static void alarm_btn_callback()
+{
+    clock_data.alarm_button.is_pressed = true;
+}
+
+static void snooze_btn_callback()
+{
+    clock_data.snooze_button.is_pressed = true;
+    clock_data.play_alarm = 0;
+    timer_start(&clock_data.snooze_timer, SNOOZE_TIME);
+    stop_alarm();
+    toggle_sprite_visibility(clock_data.sprite_manager, clock_data.snooze_id);
 }
