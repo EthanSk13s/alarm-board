@@ -9,6 +9,8 @@
 #include "../info_storage.h"
 #include "../button.h"
 
+#define ARROW_SCALE 4
+
 struct AlarmData
 {
     char alarm[6];
@@ -83,8 +85,8 @@ void transition_to_alarm(ScreenStatePtr state)
         Texture2D* clock_texture = texture_manager_get(get_texture_man(), "clock");
 
         TextureSet clock_opts = { 10, 0 };
-        TextureSet upper_opts = { 2, 0 };
-        TextureSet lower_opts = { 2, 180 };
+        TextureSet upper_opts = { ARROW_SCALE, 0 };
+        TextureSet lower_opts = { ARROW_SCALE, 180 };
 
         Sprite* hour_btn_dec_sprite = create_sprite((float) width / 2 - (center.x / 3.25),
                                                     (float) height / 2 + (center.y / 2),
