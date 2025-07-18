@@ -5,25 +5,29 @@
 #include "info_storage.h"
 #include "sprite.h"
 
-struct Button create_button(Sprite* sprite, void (*btn_callback) (void))
+int btn_init(Button* btn, Sprite* sprite, void (*btn_callback) (void))
 {
-    struct Button btn = { };
-    btn.is_pressed = false;
-    btn.pressed_fn = btn_callback;
-    if (sprite == NULL)
+    if (btn == NULL)
     {
-        btn.sprite = malloc(sizeof(Sprite));
-        btn.sprite->texture = NULL;
-        btn.sprite->color = PURPLE;
-    } else
-    {
-        btn.sprite = sprite;
+        return -1;
     }
 
-    return btn;
+    btn->is_pressed = false;
+    btn->pressed_fn = btn_callback;
+    if (sprite == NULL)
+    {
+        btn->sprite = malloc(sizeof(Sprite));
+        btn->sprite->texture = NULL;
+        btn->sprite->color = PURPLE;
+    } else
+    {
+        btn->sprite = sprite;
+    }
+
+    return 0;
 }
 
-int check_pressed(struct Button* button)
+int check_pressed(Button* button)
 {
     Vector2 mouse_point = get_virt_mouse();
 

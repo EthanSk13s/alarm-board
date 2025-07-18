@@ -5,13 +5,13 @@
 #include "utils.h"
 #include "sprite.h"
 
-struct Button
+typedef struct
 {
     int is_pressed;
     Sprite* sprite;
     void (*pressed_fn) (void);
-};
+}  Button;
 
-struct Button create_button(Sprite* sprite, void (*btn_callback) (void));
-int check_pressed(struct Button* button);
+int btn_init(Button* btn, Sprite* sprite, void (*btn_callback) (void));
+int check_pressed(Button* button);
 #endif
