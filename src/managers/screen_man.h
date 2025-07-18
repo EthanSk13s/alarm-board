@@ -1,7 +1,7 @@
 #ifndef SCREEN_MAN_H
 #define SCREEN_MAN_H
 
-#include "screen_states/screen_state.h"
+#include "../screen_states/screen_state.h"
 
 typedef struct
 {

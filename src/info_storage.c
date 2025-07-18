@@ -1,5 +1,6 @@
 #include <raylib.h>
 #include <time.h>
+
 #include "info_storage.h"
 #include "renderer.h"
 struct InfoStorage storage;

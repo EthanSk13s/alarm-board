@@ -8,11 +8,12 @@
 #include "cfg.h"
 #include "ds/hash_table.h"
 #include "renderer.h"
-#include "screen_man.h"
 #include "info_storage.h"
+#include "managers/screen_man.h"
+#include "managers/texture_man.h"
 #include "brightness/sensor/VEML7700_pigpio.h"
 #include "brightness/brightness_ctrl.h"
-#include "texture_man.h"
+
 
 #define CFG_LOCATION "./config"
 

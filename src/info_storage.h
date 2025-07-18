@@ -4,7 +4,7 @@
 #include <raylib.h>
 #include <time.h>
 #include "renderer.h"
-#include "texture_man.h"
+#include "managers/texture_man.h"
 
 #define CLOCK_FONT_SIZE 256
 

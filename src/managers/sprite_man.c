@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include "sprite_man.h"
-#include "sprite.h"
 
 #define INITIAL_CAPACITY 8
 

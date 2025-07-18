@@ -1,19 +1,17 @@
 #include <string.h>
 #include <time.h>
+#include <raylib.h>
 
 #include "alarm_state.h"
-#include "raylib.h"
-
+#include "screen_state.h"
+#include "clock_state.h"
 #include "../button.h"
 #include "../info_storage.h"
 #include "../alarm.h"
 #include "../utils.h"
 #include "../sprite.h"
-#include "../sprite_man.h"
 #include "../timer.h"
-
-#include "screen_state.h"
-#include "clock_state.h"
+#include "../managers/sprite_man.h"
 
 #define SNOOZE_TIME 600.0
 

@@ -5,7 +5,7 @@
 #include "clock_state.h"
 #include "screen_state.h"
 
-#include "../sprite_man.h"
+#include "../managers/sprite_man.h"
 #include "../info_storage.h"
 #include "../button.h"
 

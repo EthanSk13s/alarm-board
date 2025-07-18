@@ -1,6 +1,6 @@
 #ifndef SPRITE_MAN_H
 #define SPRITE_MAN_H
-#include "sprite.h"
+#include "../sprite.h"
 
 typedef struct
 {

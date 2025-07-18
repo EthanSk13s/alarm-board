@@ -2,7 +2,7 @@
 #define TEXTURE_MAN_H
 #include <raylib.h>
 
-#include "ds/hash_table.h"
+#include "../ds/hash_table.h"
 
 typedef struct TextureManager TextureManager;
 

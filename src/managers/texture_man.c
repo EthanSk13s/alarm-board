@@ -2,7 +2,6 @@
 #include <stdlib.h>
 
 #include "texture_man.h"
-#include "ds/hash_table.h"
 
 struct TextureManager
 {
