@@ -144,14 +144,17 @@ void transition_to_alarm(ScreenStatePtr state)
 
 void clean_up_alarm_state()
 {
-    Button* curr_btn = ui_man_pop(&alarm_data.ui_manager);
-    while(curr_btn)
+    if (alarm_data.textures_loaded != 0)
     {
-        free(curr_btn);
-        curr_btn = ui_man_pop(&alarm_data.ui_manager);
-    }
+        Button* curr_btn = ui_man_pop(&alarm_data.ui_manager);
+        while(curr_btn)
+        {
+            free(curr_btn);
+            curr_btn = ui_man_pop(&alarm_data.ui_manager);
+        }
 
-    sprite_man_free(alarm_data.sprite_manager);
+        sprite_man_free(alarm_data.sprite_manager);
+    }
     alarm_data.textures_loaded = 0;
 }
 

@@ -178,14 +178,18 @@ void transition_to_clock(ScreenStatePtr state)
 
 void clean_up_clock_state()
 {
-    Button* curr_btn = ui_man_pop(&clock_data.ui_manager);
-    while(curr_btn)
+    if (clock_data.textures_loaded != 0)
     {
-        free(curr_btn);
-        curr_btn = ui_man_pop(&clock_data.ui_manager);
+        Button* curr_btn = ui_man_pop(&clock_data.ui_manager);
+        while(curr_btn)
+        {
+            free(curr_btn);
+            curr_btn = ui_man_pop(&clock_data.ui_manager);
+        }
+
+        sprite_man_free(clock_data.sprite_manager);
     }
 
-    sprite_man_free(clock_data.sprite_manager);
     clock_data.textures_loaded = 0;
 }
 
