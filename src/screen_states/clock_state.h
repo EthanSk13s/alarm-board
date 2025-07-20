@@ -4,5 +4,6 @@
 #include "screen_state.h"
 
 void transition_to_clock(ScreenStatePtr state);
+void clean_up_clock_state();
 
 #endif

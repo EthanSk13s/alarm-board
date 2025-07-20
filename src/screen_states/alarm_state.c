@@ -117,7 +117,6 @@ void transition_to_alarm(ScreenStatePtr state)
         add_to_sprite_manager(alarm_data.sprite_manager, minute_btn_inc_sprite);
         add_to_sprite_manager(alarm_data.sprite_manager, clock_sprite);
 
-
         Button* hour_button_dec = malloc(sizeof(Button));
         Button* hour_button_inc  = malloc(sizeof(Button));
         Button* min_button_dec = malloc(sizeof(Button));
@@ -141,6 +140,19 @@ void transition_to_alarm(ScreenStatePtr state)
         
         alarm_data.textures_loaded = 1;
     }
+}
+
+void clean_up_alarm_state()
+{
+    Button* curr_btn = ui_man_pop(&alarm_data.ui_manager);
+    while(curr_btn)
+    {
+        free(curr_btn);
+        curr_btn = ui_man_pop(&alarm_data.ui_manager);
+    }
+
+    sprite_man_free(alarm_data.sprite_manager);
+    alarm_data.textures_loaded = 0;
 }
 
 static void clock_btn_callback()

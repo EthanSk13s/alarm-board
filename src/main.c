@@ -114,6 +114,7 @@ int main(void)
         VEML7700_close();
     }
 
+    screen_man_free();
     cfg_save(CFG_LOCATION);
 
     CloseWindow();        // Close window and OpenGL context

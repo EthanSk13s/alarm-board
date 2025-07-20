@@ -12,4 +12,6 @@ ScreenManager* init_screen_man();
 void clock_screen();
 void alarm_screen();
 
+void screen_man_free();
+
 #endif

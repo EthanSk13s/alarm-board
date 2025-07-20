@@ -1,7 +1,8 @@
 #include <stdlib.h>
 
 #include "../screen_states/clock_state.h"
-#include "time.h"
+#include "../screen_states/alarm_state.h"
+
 #include "screen_man.h"
 
 ScreenManager* init_screen_man()
@@ -14,4 +15,10 @@ ScreenManager* init_screen_man()
     }
 
     return instance;
+}
+
+void screen_man_free()
+{
+    clean_up_alarm_state();
+    clean_up_clock_state();
 }
