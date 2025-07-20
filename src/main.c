@@ -29,7 +29,7 @@ int main(void)
     int font_size = 200;
     const int flags = FLAG_WINDOW_RESIZABLE | FLAG_VSYNC_HINT;
 
-    InitWindow(screenWidth, screenHeight, "rayalarm");
+    InitWindow(screenWidth, screenHeight, "alarm-board");
     SetWindowState(flags);
     InitAudioDevice();              // Initialize audio device
     int result = gpioInitialise();

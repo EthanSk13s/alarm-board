@@ -1,4 +1,4 @@
-EXEC_NAME=rayalarm
+EXEC_NAME=alarm-board
 CC=gcc
 CFLAGS=-lraylib -lGL -lm -lpthread -ldl -lrt -lX11 -lpigpio
 BUILD_PATH= ./build
