@@ -14,4 +14,6 @@ int add_to_sprite_manager(SpriteManager* sprite_manager, Sprite* sprite);
 void free_sprite_manager(SpriteManager* sprite_manager);
 void draw_sprites(SpriteManager* sprite_manager);
 void toggle_sprite_visibility(SpriteManager* sprite_manager, int id);
+void sprite_man_free(SpriteManager* sprite_manager);
+
 #endif

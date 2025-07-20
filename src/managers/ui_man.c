@@ -73,3 +73,25 @@ int ui_man_remove(UIManager* ui_manager, int btn_id)
 
     return 0;
 }
+
+Button* ui_man_pop(UIManager* ui_manager)
+{
+    if (ui_manager == NULL)
+    {
+        return NULL;
+    }
+
+    Button* pop_btn = NULL;
+    for (int i = UI_MAX_SIZE - 1; i >= 0; i--)
+    {
+        if (ui_manager->btns[i] != NULL)
+        {
+            pop_btn = ui_manager->btns[i];
+            ui_manager->btns[i] = NULL;
+
+            break;
+        }
+    }
+
+    return pop_btn;
+}

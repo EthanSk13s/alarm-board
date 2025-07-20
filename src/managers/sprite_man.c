@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include "sprite_man.h"
 
 #define INITIAL_CAPACITY 8
@@ -55,6 +56,19 @@ void draw_sprites(SpriteManager* sprite_manager)
 
         }
     }
+}
+
+void sprite_man_free(SpriteManager* sprite_manager)
+{
+    for (int i = 0; sprite_manager->count > i; i++)
+    {
+        if (sprite_manager->sprites[i] != NULL)
+        {
+            free(sprite_manager->sprites[i]);
+        }
+    }
+
+    free(sprite_manager);
 }
 
 void toggle_sprite_visibility(SpriteManager* sprite_manager, int id)
