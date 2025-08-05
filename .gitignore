@@ -1,3 +1,7 @@
 build/
 *.o
 config
+
+# clangd
+compile_flags.txt
+.clangd
