@@ -2,12 +2,20 @@
 #define UTILS_H
 
 #include <raylib.h>
+#include <stddef.h>
 
 typedef struct
 {
     float scale;
     int rotation;
 }  TextureSet;
+
+typedef struct
+{
+    char* buffer;
+    size_t buf_length;
+    size_t max_length;
+} Buffer;
 
 int compare_color(Color x, Color y);
 
