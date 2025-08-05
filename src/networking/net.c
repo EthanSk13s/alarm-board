@@ -30,6 +30,29 @@ static size_t write_callback(char* data, size_t size, size_t nmemb, void* user_d
     return realsize;
 }
 
+
+cJSON* net_get_json_request(NetworkHandler* net_handler)
+{
+    if (net_handler == NULL)
+    {
+        return NULL;
+    }
+
+    CURLcode res = curl_easy_perform(net_handler->curl);
+    if (res != CURLE_OK)
+    {
+        return NULL;
+    }
+
+    cJSON* json_resp = cJSON_Parse(net_handler->buf.buffer);
+    if (json_resp == NULL)
+    {
+        return NULL;
+    }
+
+    return json_resp;
+}
+
 int net_init_handler(NetworkHandler* net_handler, char* url)
 {
     net_handler->curl = curl_easy_init();
