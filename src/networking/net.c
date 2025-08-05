@@ -66,4 +66,10 @@ int net_init_handler(NetworkHandler* net_handler, char* url)
 void net_free_handler(NetworkHandler* net_handler)
 {
     curl_easy_cleanup(net_handler->curl);
+
+    free(net_handler->buf.buffer);
+    net_handler->buf.buffer = NULL;
+
+    net_handler->buf.max_length = 0;
+    net_handler->buf.buf_length = 0;
 }
