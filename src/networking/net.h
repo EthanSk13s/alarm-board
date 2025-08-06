@@ -15,10 +15,11 @@ typedef struct
     char url[NET_MAX_URL_LENGTH];
 } NetworkHandler;
 
-int net_init_handler(NetworkHandler* net_handler, char* url);
+int net_init_handler(NetworkHandler* net_handler, const char* url);
 
 // Note: As for cJSON specs, you are responsible for freeing memory allocated
 // by cJSON. Free via `cJSON_Delete`.
 cJSON* net_get_json_request(NetworkHandler* net_handler);
+int net_set_url(NetworkHandler* net_handler, const char* url);
 void net_free_handler(NetworkHandler* net_handler);
 #endif

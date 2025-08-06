@@ -53,10 +53,37 @@ cJSON* net_get_json_request(NetworkHandler* net_handler)
     return json_resp;
 }
 
-int net_init_handler(NetworkHandler* net_handler, char* url)
+int net_init_handler(NetworkHandler* net_handler, const char* url)
 {
     net_handler->curl = curl_easy_init();
     if (!net_handler->curl)
+    {
+        return -1;
+    }
+
+    net_handler->buf.buffer = malloc(INITIAL_BUFFER_SIZE);
+    if (!net_handler->buf.buffer)
+    {
+        return -1;
+    }
+
+    net_handler->buf.max_length = INITIAL_BUFFER_SIZE;
+    net_handler->buf.buf_length = 0;
+    if (net_set_url(net_handler, url) == -1)
+    {
+        net_free_handler(net_handler);
+        return -1;
+    }
+
+    curl_easy_setopt(net_handler->curl, CURLOPT_WRITEDATA, (void*) &net_handler->buf);
+    curl_easy_setopt(net_handler->curl, CURLOPT_WRITEFUNCTION, write_callback);
+
+    return 0;
+}
+
+int net_set_url(NetworkHandler* net_handler, const char* url)
+{
+    if (net_handler == NULL || url == NULL)
     {
         return -1;
     }
@@ -67,21 +94,8 @@ int net_init_handler(NetworkHandler* net_handler, char* url)
         return -1;
     }
 
-
-    net_handler->buf.buffer = malloc(INITIAL_BUFFER_SIZE);
-    if (!net_handler->buf.buffer)
-    {
-        return -1;
-    }
-
-    net_handler->buf.max_length = INITIAL_BUFFER_SIZE;
-    net_handler->buf.buf_length = 0;
-
     strncpy(net_handler->url, url, NET_MAX_URL_LENGTH);
-
     curl_easy_setopt(net_handler->curl, CURLOPT_URL, net_handler->url);
-    curl_easy_setopt(net_handler->curl, CURLOPT_WRITEDATA, (void*) &net_handler->buf);
-    curl_easy_setopt(net_handler->curl, CURLOPT_WRITEFUNCTION, write_callback);
 
     return 0;
 }
