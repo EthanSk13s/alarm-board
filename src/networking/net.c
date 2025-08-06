@@ -50,6 +50,9 @@ cJSON* net_get_json_request(NetworkHandler* net_handler)
         return NULL;
     }
 
+    // Once we're done parsing the response. Set the position back to 0.
+    // So we can use the rest of the buffer.
+    net_handler->buf.buf_length = 0;
     return json_resp;
 }
 
