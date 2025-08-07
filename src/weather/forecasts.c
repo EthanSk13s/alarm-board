@@ -33,7 +33,7 @@ static int forecast_parse_weather(const cJSON* wt_json, Weather* weather)
         cJSON* id = cJSON_GetObjectItemCaseSensitive(wt, "id");
         cJSON* icon = cJSON_GetObjectItemCaseSensitive(wt, "icon");
         cJSON* main = cJSON_GetObjectItemCaseSensitive(wt, "main");
-        if (i < 2)
+        if (i < FORECAST_MAX_WEATHER_SIZE)
         {
             if (!cJSON_IsNumber(id) || !cJSON_IsString(icon) || !cJSON_IsString(main))
             {
@@ -41,8 +41,8 @@ static int forecast_parse_weather(const cJSON* wt_json, Weather* weather)
             }
 
             weather[i].id = id->valueint;
-            strncpy(weather[i].icon, icon->valuestring, 4);
-            strncpy(weather[i].main, main->valuestring, 12);
+            strncpy(weather[i].icon, icon->valuestring, FORECAST_MAX_ICON_LENGTH);
+            strncpy(weather[i].main, main->valuestring, FORECAST_MAX_WEATHER_NAME_LENGTH);
         } else
         {
             return 0;
@@ -95,7 +95,7 @@ int forecast_parse_dailies(DailyForecast* daily_fc, const cJSON* daily_json)
     int i = 0, res = 0;
     cJSON_ArrayForEach(forecast, forecasts)
     {
-        if (i < 5)
+        if (i < FORECAST_MAX_DAILY_SIZE)
         {
             char* print = cJSON_Print(forecast);
             cJSON* temp = cJSON_GetObjectItemCaseSensitive(forecast, "temp");
