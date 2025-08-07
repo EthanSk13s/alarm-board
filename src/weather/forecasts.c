@@ -43,6 +43,9 @@ static int forecast_parse_weather(const cJSON* wt_json, Weather* weather)
             weather[i].id = id->valueint;
             strncpy(weather[i].icon, icon->valuestring, 4);
             strncpy(weather[i].main, main->valuestring, 12);
+        } else
+        {
+            return 0;
         }
         i++;
     }
@@ -136,6 +139,9 @@ int forecast_parse_dailies(DailyForecast* daily_fc, const cJSON* daily_json)
             {
                 return res;
             }
+        } else
+        {
+            return 0;
         }
 
         i++;
