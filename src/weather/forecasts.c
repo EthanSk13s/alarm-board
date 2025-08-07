@@ -97,7 +97,6 @@ int forecast_parse_dailies(DailyForecast* daily_fc, const cJSON* daily_json)
     {
         if (i < FORECAST_MAX_DAILY_SIZE)
         {
-            char* print = cJSON_Print(forecast);
             cJSON* temp = cJSON_GetObjectItemCaseSensitive(forecast, "temp");
             if (!cJSON_IsObject(temp))
             {
