@@ -49,6 +49,8 @@ typedef struct
     DailyForecast daily[5];
 } WeatherForecast;
 
-int forecast_parse_json(WeatherForecast* weather_fc, const cJSON* json);
+int forecast_parse_full(WeatherForecast* weather_fc, const cJSON* json);
+int forecast_parse_dailies(DailyForecast* daily_fc, const cJSON* daily_json);
+int forecast_parse_current(CurrentForecast* current_fc, const cJSON* curr_json);
 
 #endif
