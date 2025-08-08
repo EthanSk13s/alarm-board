@@ -60,7 +60,7 @@ int weather_init_api(WeatherAPI* w_api, char* key, Units unit, float latitude, f
         return -1;
     }
 
-    strncpy(cfg->api, key, 32);
+    strncpy(cfg->api, key, API_KEY_SIZE);
     cfg->unit = handle_units(unit);
     cfg->coords.latitude = latitude;
     cfg->coords.longitude = longitude;
