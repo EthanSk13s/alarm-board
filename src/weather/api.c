@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "api.h"
+#include "forecasts.h"
 
 #define API_KEY_SIZE 33
 #define API_URL_TEMPLATE "https://api.openweathermap.org/data/3.0/onecall?lat=%f&lon=%f&exclude=hourly,minutely&appid=%s&units=%s"
@@ -64,6 +65,7 @@ int weather_init_api(WeatherAPI* w_api, char* key, Units unit, float latitude, f
     cfg->unit = handle_units(unit);
     cfg->coords.latitude = latitude;
     cfg->coords.longitude = longitude;
+    w_api->_config = cfg;
 
     char url[NET_MAX_URL_LENGTH];
     sprintf(url, API_URL_TEMPLATE, cfg->coords.latitude,
@@ -87,4 +89,23 @@ void weather_free_api(WeatherAPI* w_api)
     free(w_api->_config);
 
     w_api->_config = NULL;
+}
+
+int weather_get_forecast(WeatherAPI* w_api, WeatherForecast* w_fc)
+{
+    if (w_api == NULL || w_fc == NULL)
+    {
+        return -1;
+    }
+
+    cJSON* json = net_get_json_request(&w_api->net_handler);
+    if (json == NULL)
+    {
+        return -1;
+    }
+
+    int res = forecast_parse_full(w_fc, json);
+    cJSON_Delete(json);
+
+    return res;
 }
