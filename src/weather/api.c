@@ -150,7 +150,7 @@ int weather_update_long(WeatherAPI* w_api, float longitude)
         return -1;
     }
 
-    w_api->_config->coords.latitude = longitude;
+    w_api->_config->coords.longitude = longitude;
     return update_url(&w_api->net_handler, w_api->_config);
 }
 
