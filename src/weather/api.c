@@ -48,6 +48,17 @@ static char* units_to_str(Units unit)
     }
 }
 
+static int update_url(NetworkHandler* net_handler, WeatherConfig* cfg)
+{
+    char url[NET_MAX_URL_LENGTH];
+    sprintf(url, API_URL_TEMPLATE, cfg->coords.latitude,
+                                             cfg->coords.longitude,
+                                             cfg->api,
+                                             units_to_str(cfg->unit));
+    
+    return net_set_url(net_handler, url);
+}
+
 int weather_init_api(WeatherAPI* w_api, char* key, Units unit, float latitude, float longitude)
 {
     if (w_api == NULL || key == NULL)
@@ -108,4 +119,48 @@ int weather_get_forecast(WeatherAPI* w_api, WeatherForecast* w_fc)
     cJSON_Delete(json);
 
     return res;
+}
+
+int weather_update_api(WeatherAPI* w_api, char* new_key)
+{
+    if (w_api == NULL)
+    {
+        return -1;
+    }
+
+    strncpy(w_api->_config->api, new_key, API_KEY_SIZE);
+    return update_url(&w_api->net_handler, w_api->_config);
+}
+
+int weather_update_lat(WeatherAPI* w_api, float latitude)
+{
+    if (w_api == NULL)
+    {
+        return -1;
+    }
+
+    w_api->_config->coords.latitude = latitude;
+    return update_url(&w_api->net_handler, w_api->_config);
+}
+
+int weather_update_long(WeatherAPI* w_api, float longitude)
+{
+    if (w_api == NULL)
+    {
+        return -1;
+    }
+
+    w_api->_config->coords.latitude = longitude;
+    return update_url(&w_api->net_handler, w_api->_config);
+}
+
+int weather_update_units(WeatherAPI* w_api, Units unit)
+{
+    if (w_api == NULL)
+    {
+        return -1;
+    }
+
+    w_api->_config->unit = unit;
+    return update_url(&w_api->net_handler, w_api->_config);
 }

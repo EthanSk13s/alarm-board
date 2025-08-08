@@ -24,4 +24,9 @@ void weather_free_api(WeatherAPI* w_api);
 
 int weather_get_forecast(WeatherAPI* w_api, WeatherForecast* w_fc);
 
+int weather_update_api(WeatherAPI* w_api, char* new_key);
+int weather_update_lat(WeatherAPI* w_api, float latitude);
+int weather_update_long(WeatherAPI* w_api, float longitude);
+int weather_update_units(WeatherAPI* w_api, Units unit);
+
 #endif
