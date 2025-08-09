@@ -89,27 +89,32 @@ void transition_to_alarm(ScreenStatePtr state)
                                                     (float) height / 2 + (center.y / 2),
                                                     arrow_texture,
                                                     lower_opts,
-                                                    BLUE);
+                                                    BLUE,
+                                                    0);
         Sprite* hour_btn_inc_sprite = create_sprite((float) width / 2 - (center.x / 3.25),
                                                     (float) height / 2 - (center.y / 1.25),
                                                     arrow_texture,
                                                     upper_opts,
-                                                    BLUE);
+                                                    BLUE,
+                                                    0);
         Sprite* minute_btn_dec_sprite = create_sprite((float) width / 2 + (center.x / 3.25),
                                                       (float) height / 2 + (center.y / 2),
                                                       arrow_texture,
                                                       lower_opts,
-                                                      BLUE);
+                                                      BLUE,
+                                                      0);
         Sprite* minute_btn_inc_sprite = create_sprite((float) width / 2 + (center.x / 3.25),
                                                       (float) height / 2 - (center.y / 1.25),
                                                       arrow_texture,
                                                       upper_opts,
-                                                      BLUE);
+                                                      BLUE,
+                                                      0);
         Sprite* clock_sprite = create_sprite(width - 180,
                                              height / 1.5,
                                              clock_texture,
                                              clock_opts,
-                                             WHITE);
+                                             WHITE,
+                                             0);
 
         add_to_sprite_manager(alarm_data.sprite_manager, hour_btn_dec_sprite);
         add_to_sprite_manager(alarm_data.sprite_manager, hour_btn_inc_sprite);

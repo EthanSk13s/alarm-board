@@ -4,7 +4,7 @@
 #include "sprite.h"
 #include "ds/hash_table.h"
 
-Sprite* create_sprite(float x, float y, Texture2D* texture, TextureSet texture_opts, Color color)
+Sprite* create_sprite(float x, float y, Texture2D* texture, TextureSet texture_opts, Color color, int flip)
 {
     Sprite* sprite = malloc(sizeof(Sprite));
     if (sprite == NULL || texture == NULL)
@@ -21,6 +21,7 @@ Sprite* create_sprite(float x, float y, Texture2D* texture, TextureSet texture_o
     sprite->texture_opts = texture_opts;
     sprite->color = color;
     sprite->visible = 1;
+    sprite->flip = flip;
 
     return sprite;
 }
@@ -59,6 +60,10 @@ void draw_sprite(Sprite* sprite)
         dest.y += origin.y;
     }
     Rectangle src = { 0, 0, sprite->bounds.width / scale, sprite->bounds.height / scale};
+    if (sprite->flip)
+    {
+        src.height = -src.height;
+    }
 
     DrawTexturePro(*sprite->texture, src, dest, origin, rotation, sprite->color);
 }

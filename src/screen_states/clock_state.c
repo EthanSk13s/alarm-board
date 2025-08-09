@@ -136,17 +136,20 @@ void transition_to_clock(ScreenStatePtr state)
                                              height / 1.5,
                                              alarm_texture,
                                              alarm_toggle_texture_opts,
-                                             WHITE);
+                                             WHITE,
+                                             0);
         Sprite* toggle_sprite = create_sprite(0,
                                               height / 1.5,
                                               toggle_texture,
                                               alarm_toggle_texture_opts,
-                                              RED);
+                                              RED,
+                                              0);
         Sprite* snooze_sprite = create_sprite(center.x,
                                               height / 1.5,
                                               snooze_texture,
                                               alarm_toggle_texture_opts,
-                                              BLUE);
+                                              BLUE,
+                                              0);
         
         add_to_sprite_manager(clock_data.sprite_manager, alarm_sprite);
         add_to_sprite_manager(clock_data.sprite_manager, toggle_sprite);
