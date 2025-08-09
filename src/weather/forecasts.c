@@ -103,8 +103,8 @@ int forecast_parse_dailies(DailyForecast* daily_fc, const cJSON* daily_json)
                 return -1;
             }
 
-            cJSON* temp_max = cJSON_GetObjectItemCaseSensitive(temp, "min");
-            cJSON* temp_min = cJSON_GetObjectItemCaseSensitive(temp, "max");
+            cJSON* temp_max = cJSON_GetObjectItemCaseSensitive(temp, "max");
+            cJSON* temp_min = cJSON_GetObjectItemCaseSensitive(temp, "min");
 
             if (!cJSON_IsNumber(temp_max) || !cJSON_IsNumber(temp_min))
             {
