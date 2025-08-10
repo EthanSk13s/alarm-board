@@ -18,5 +18,6 @@ typedef struct
 } Buffer;
 
 int compare_color(Color x, Color y);
+Vector2 utils_center_text(Font font, Vector2 origin, char* text, int font_size, int spacing);
 
 #endif
