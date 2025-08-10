@@ -2,7 +2,6 @@
 #include <raylib.h>
 #include <pigpio.h>
 #include <pthread.h>
-#include <time.h>
 
 #include "alarm.h"
 #include "cfg.h"
@@ -59,6 +58,21 @@ int main(void)
     texture_manager_add(texture_man, "alarm-arrow", "assets/alarm-arrow.png");
     texture_manager_add(texture_man, "snooze", "assets/snooze.png");
     texture_manager_add(texture_man, "clock", "assets/clock.png");
+
+    texture_manager_add(texture_man, "sun", "assets/sun.png");
+    texture_manager_add(texture_man, "moon", "assets/moon.png");
+    texture_manager_add(texture_man, "day_clouded", "assets/day_few_clouded.png");
+    texture_manager_add(texture_man, "night_clouded", "assets/night_few_clouded.png");
+    texture_manager_add(texture_man, "day_rain", "assets/day_rain.png");
+    texture_manager_add(texture_man, "night_rain", "assets/night_rain.png");
+    texture_manager_add(texture_man, "broken", "assets/broken.png");
+    texture_manager_add(texture_man, "scattered", "assets/scattered.png");
+    texture_manager_add(texture_man, "shower", "assets/shower.png");
+    texture_manager_add(texture_man, "rainstorm", "assets/rainstorm.png");
+    texture_manager_add(texture_man, "snow", "assets/snow.png");
+    texture_manager_add(texture_man, "mist", "assets/mist.png");
+
+    texture_manager_add(texture_man, "unknown", "assets/unknown.png");
 
     init_renderer(renderer, screenWidth, screenHeight);
     init_storage(renderer, texture_man);
