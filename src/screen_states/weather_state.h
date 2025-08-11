@@ -13,6 +13,7 @@ typedef struct
 } WeatherStateConfig;
 
 void transition_to_wthr_state(ScreenStatePtr state);
+void clean_up_wthr_state();
 void wthr_state_init();
 
 void* wthr_state_update_thread(void* config_data);

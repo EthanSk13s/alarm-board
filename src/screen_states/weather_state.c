@@ -5,7 +5,6 @@
 
 #include "weather_state.h"
 
-#include "cJSON/cJSON.h"
 #include "clock_state.h"
 #include "../timer.h"
 #include "../info_storage.h"
@@ -15,17 +14,15 @@
 
 struct ForecastData
 {
-    int textures_loaded;
+    int wthr_new_data;
+    pthread_mutex_t lock;
     SpriteManager* sprite_manager;
+    WeatherForecast fc;
     ForecastWidget fc_wdgt[FORECAST_MAX_DAILY_SIZE];
 };
 
 static struct ForecastData forecast_data;
 static volatile int wthr_kill_thread = 0;
-
-static int wthr_new_data = 0;
-pthread_mutex_t lock;
-static WeatherForecast fc;
 
 static void forecast_update(ScreenStatePtr state)
 {
@@ -34,14 +31,14 @@ static void forecast_update(ScreenStatePtr state)
         transition_to_clock(state);
     }
 
-    if (wthr_new_data == 1)
+    if (forecast_data.wthr_new_data == 1)
     {
         for (int i = 0; i < FORECAST_MAX_DAILY_SIZE; i++)
         {
-            wdgt_forecast_update(&forecast_data.fc_wdgt[i], &fc.daily[i]);
+            wdgt_forecast_update(&forecast_data.fc_wdgt[i], &forecast_data.fc.daily[i]);
         }
 
-        wthr_new_data = 0;
+        forecast_data.wthr_new_data = 0;
     }
 }
 
@@ -59,12 +56,21 @@ void wthr_state_init()
     for (int i = 0; i < FORECAST_MAX_DAILY_SIZE; i++)
     {
         Sprite* forecast = wdgt_forecast_init(&forecast_data.fc_wdgt[i],
-                                                (Vector2) {x, y},
-                                                (Vector2) {150, 400},
-                                                NULL);
+                                              (Vector2) {x, y},
+                                              (Vector2) {150, 400},
+                                              NULL);
         add_to_sprite_manager(forecast_data.sprite_manager, forecast);
         x += 250;
     }
+}
+
+void clean_up_wthr_state()
+{
+    for (int i = 0; i < FORECAST_MAX_DAILY_SIZE; i++)
+    {
+        wdgt_forecast_free(&forecast_data.fc_wdgt[i]);
+    }
+    sprite_man_free(forecast_data.sprite_manager);
 }
 
 void wthr_state_kill_thread()
@@ -102,15 +108,15 @@ void* wthr_state_update_thread(void* config_data)
     timer_start(&update_timer, 60 * 60);
     while(!wthr_kill_thread)
     {
-        res = weather_get_forecast(&w_api, &fc);
+        res = weather_get_forecast(&w_api, &forecast_data.fc);
         if (res == -1)
         {
             printf("WARN: Failed to get current data.\n");
         } else
         {
-            pthread_mutex_lock(&lock);
-            wthr_new_data = 1;
-            pthread_mutex_unlock(&lock);
+            pthread_mutex_lock(&forecast_data.lock);
+            forecast_data.wthr_new_data = 1;
+            pthread_mutex_unlock(&forecast_data.lock);
         }
 
         // Sleep for a second to save on CPU cycles.
