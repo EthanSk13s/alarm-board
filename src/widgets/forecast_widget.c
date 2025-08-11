@@ -8,6 +8,7 @@
 #include "../managers/texture_man.h"
 #include "../info_storage.h"
 #include "../utils.h"
+#include "cJSON/cJSON.h"
 
 #define WEEKDAY_FONT_SIZE 32
 #define TEMP_FONT_SIZE    20
@@ -88,20 +89,23 @@ static void wdgt_forecast_draw(ForecastWidget* fc_wdgt)
 
 Sprite* wdgt_forecast_init(ForecastWidget* fc_wdgt, Vector2 pos, Vector2 size, DailyForecast* forecast)
 {
-    if (fc_wdgt == NULL || forecast == NULL)
+    if (fc_wdgt == NULL)
     {
         return NULL;
     }
 
     fc_wdgt->pos = pos;
     fc_wdgt->size = size;
-    int res = wdgt_forecast_update(fc_wdgt, forecast);
-    if (res == -1)
+    fc_wdgt->target = LoadRenderTexture(fc_wdgt->size.x, fc_wdgt->size.y);
+    if (forecast != NULL)
     {
-        return NULL;
+        int res = wdgt_forecast_update(fc_wdgt, forecast);
+        if (res == -1)
+        {
+            return NULL;
+        }
     }
 
-    wdgt_forecast_draw(fc_wdgt);
     return create_sprite(fc_wdgt->pos.x,
                          fc_wdgt->pos.y,
                          &fc_wdgt->target.texture,
@@ -123,8 +127,6 @@ int wdgt_forecast_update(ForecastWidget* fc_wdgt, DailyForecast* forecast)
     }
 
     strncpy(fc_wdgt->icon_id, forecast->weather[0].icon, FORECAST_MAX_ICON_LENGTH);
-    fc_wdgt->target = LoadRenderTexture(fc_wdgt->size.x, fc_wdgt->size.y);
-
     fc_wdgt->temp_max = forecast->temp_max;
     fc_wdgt->temp_min = forecast->temp_min;
 
