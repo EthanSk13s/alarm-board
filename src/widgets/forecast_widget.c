@@ -93,15 +93,13 @@ Sprite* wdgt_forecast_init(ForecastWidget* fc_wdgt, Vector2 pos, Vector2 size, D
         return NULL;
     }
 
-    strncpy(fc_wdgt->icon_id, forecast->weather[0].icon, FORECAST_MAX_ICON_LENGTH);
     fc_wdgt->pos = pos;
     fc_wdgt->size = size;
-    fc_wdgt->target = LoadRenderTexture(fc_wdgt->size.x, fc_wdgt->size.y);
-
-    fc_wdgt->temp_max = forecast->temp_max;
-    fc_wdgt->temp_min = forecast->temp_min;
-
-    fc_wdgt->dt = forecast->day.dt;
+    int res = wdgt_forecast_update(fc_wdgt, forecast);
+    if (res == -1)
+    {
+        return NULL;
+    }
 
     wdgt_forecast_draw(fc_wdgt);
     return create_sprite(fc_wdgt->pos.x,
@@ -115,6 +113,25 @@ Sprite* wdgt_forecast_init(ForecastWidget* fc_wdgt, Vector2 pos, Vector2 size, D
 void wdgt_forecast_free(ForecastWidget* fc_wdgt)
 {
     UnloadRenderTexture(fc_wdgt->target);
+}
+
+int wdgt_forecast_update(ForecastWidget* fc_wdgt, DailyForecast* forecast)
+{
+    if (fc_wdgt == NULL || forecast == NULL)
+    {
+        return -1;
+    }
+
+    strncpy(fc_wdgt->icon_id, forecast->weather[0].icon, FORECAST_MAX_ICON_LENGTH);
+    fc_wdgt->target = LoadRenderTexture(fc_wdgt->size.x, fc_wdgt->size.y);
+
+    fc_wdgt->temp_max = forecast->temp_max;
+    fc_wdgt->temp_min = forecast->temp_min;
+
+    fc_wdgt->dt = forecast->day.dt;
+
+    wdgt_forecast_draw(fc_wdgt);
+    return 0;
 }
 
 static char* parse_wthr_icon(char* icon_id)
