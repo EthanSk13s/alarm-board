@@ -4,6 +4,8 @@
 #include "forecasts.h"
 #include "../networking/net.h"
 
+#define WEATHER_API_KEY_SIZE 33
+
 typedef struct WeatherConfig WeatherConfig;
 
 typedef enum

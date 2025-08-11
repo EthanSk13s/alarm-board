@@ -5,7 +5,6 @@
 #include "api.h"
 #include "forecasts.h"
 
-#define API_KEY_SIZE 33
 #define API_URL_TEMPLATE "https://api.openweathermap.org/data/3.0/onecall?lat=%f&lon=%f&exclude=hourly,minutely&appid=%s&units=%s"
 
 #define UNITS_KELVIN   "standard"
@@ -21,7 +20,7 @@ typedef struct
 struct WeatherConfig
 {
     Units unit;
-    char api[API_KEY_SIZE];
+    char api[WEATHER_API_KEY_SIZE];
     GPSCoordinates coords;
 };
 
@@ -72,7 +71,7 @@ int weather_init_api(WeatherAPI* w_api, char* key, Units unit, float latitude, f
         return -1;
     }
 
-    strncpy(cfg->api, key, API_KEY_SIZE);
+    strncpy(cfg->api, key, WEATHER_API_KEY_SIZE);
     cfg->unit = handle_units(unit);
     cfg->coords.latitude = latitude;
     cfg->coords.longitude = longitude;
@@ -128,7 +127,7 @@ int weather_update_api(WeatherAPI* w_api, char* new_key)
         return -1;
     }
 
-    strncpy(w_api->_config->api, new_key, API_KEY_SIZE);
+    strncpy(w_api->_config->api, new_key, WEATHER_API_KEY_SIZE);
     return update_url(&w_api->net_handler, w_api->_config);
 }
 
