@@ -6,6 +6,7 @@
 #include "alarm_state.h"
 #include "screen_state.h"
 #include "clock_state.h"
+#include "weather_state.h"
 #include "../button.h"
 #include "../info_storage.h"
 #include "../alarm.h"
@@ -24,6 +25,7 @@ struct ClockData
     Button* alarm_button;
     Button* toggle_button;
     Button* snooze_button;
+    Button* wthr_button;
     SpriteManager* sprite_manager;
     UIManager ui_manager;
     Timer snooze_timer;
@@ -38,6 +40,7 @@ static struct ClockData clock_data;
 static void toggle_btn_callback();
 static void alarm_btn_callback();
 static void snooze_btn_callback();
+static void wthr_btn_callback();
 
 static void clock_update(ScreenStatePtr state)
 {
@@ -59,6 +62,12 @@ static void clock_update(ScreenStatePtr state)
     {
         clock_data.alarm_button->is_pressed = false;
         transition_to_alarm(state);
+    }
+
+    if (clock_data.wthr_button->is_pressed)
+    {
+        clock_data.wthr_button->is_pressed = false;
+        transition_to_wthr_state(state);
     }
 
     if (clock_data.toggle_button->is_pressed)
@@ -127,32 +136,40 @@ void transition_to_clock(ScreenStatePtr state)
         Texture2D* alarm_texture = texture_manager_get(get_texture_man(), "alarm");
         Texture2D* toggle_texture = texture_manager_get(get_texture_man(), "set-alarm");
         Texture2D* snooze_texture = texture_manager_get(get_texture_man(), "snooze");
+        Texture2D* wthr_texture = texture_manager_get(get_texture_man(), "day_clouded");
 
-        TextureSet alarm_toggle_texture_opts = { 10 , 0};
+        TextureSet btn_texture_opts = { 10 , 0};
         float width = get_current_width();
         float height = get_current_height();
 
         Sprite* alarm_sprite = create_sprite(width - 180,
                                              height / 1.5,
                                              alarm_texture,
-                                             alarm_toggle_texture_opts,
+                                             btn_texture_opts,
                                              WHITE,
                                              0);
         Sprite* toggle_sprite = create_sprite(0,
                                               height / 1.5,
                                               toggle_texture,
-                                              alarm_toggle_texture_opts,
+                                              btn_texture_opts,
                                               RED,
                                               0);
         Sprite* snooze_sprite = create_sprite(center.x,
                                               height / 1.5,
                                               snooze_texture,
-                                              alarm_toggle_texture_opts,
+                                              btn_texture_opts,
                                               BLUE,
                                               0);
+        Sprite* wthr_sprite = create_sprite(0,
+                                            20,
+                                            wthr_texture,
+                                            btn_texture_opts,
+                                            WHITE,
+                                            0);
         
         add_to_sprite_manager(clock_data.sprite_manager, alarm_sprite);
         add_to_sprite_manager(clock_data.sprite_manager, toggle_sprite);
+        add_to_sprite_manager(clock_data.sprite_manager, wthr_sprite);
 
         clock_data.snooze_id = add_to_sprite_manager(clock_data.sprite_manager,
                                                      snooze_sprite);
@@ -162,18 +179,22 @@ void transition_to_clock(ScreenStatePtr state)
         Button* alarm_button = malloc(sizeof(Button));
         Button* snooze_button = malloc(sizeof(Button));
         Button* toggle_button = malloc(sizeof(Button));
+        Button* wthr_button = malloc(sizeof(Button));
 
         btn_init(alarm_button, alarm_sprite, alarm_btn_callback);
         btn_init(snooze_button, snooze_sprite, snooze_btn_callback);
         btn_init(toggle_button, toggle_sprite, toggle_btn_callback);
+        btn_init(wthr_button, wthr_sprite, wthr_btn_callback);
 
-        int alarm_btn_id = ui_man_add(&clock_data.ui_manager, alarm_button);
-        int snooze_btn_id = ui_man_add(&clock_data.ui_manager, snooze_button);
-        int toggle_btn_id = ui_man_add(&clock_data.ui_manager, toggle_button);
+        ui_man_add(&clock_data.ui_manager, alarm_button);
+        ui_man_add(&clock_data.ui_manager, snooze_button);
+        ui_man_add(&clock_data.ui_manager, toggle_button);
+        ui_man_add(&clock_data.ui_manager, wthr_button);
 
         clock_data.alarm_button = alarm_button;
         clock_data.snooze_button = snooze_button;
         clock_data.toggle_button = toggle_button;
+        clock_data.wthr_button = wthr_button;
 
         clock_data.textures_loaded = 1;
     }
@@ -218,6 +239,11 @@ static void toggle_btn_callback()
 static void alarm_btn_callback()
 {
     clock_data.alarm_button->is_pressed = true;
+}
+
+static void wthr_btn_callback()
+{
+    clock_data.wthr_button->is_pressed = true;
 }
 
 static void snooze_btn_callback()

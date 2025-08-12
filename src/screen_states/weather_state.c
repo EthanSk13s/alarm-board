@@ -1,5 +1,6 @@
 #include <pthread.h>
 #include <raylib.h>
+#include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
 
@@ -8,15 +9,20 @@
 #include "clock_state.h"
 #include "../timer.h"
 #include "../info_storage.h"
+#include "../button.h"
 #include "../managers/sprite_man.h"
+#include "../managers/ui_man.h"
 #include "../widgets/forecast_widget.h"
 
 
 struct ForecastData
 {
     int wthr_new_data;
+    int has_loaded;
     pthread_mutex_t lock;
     SpriteManager* sprite_manager;
+    Button* clk_btn;
+    UIManager ui_manager;
     WeatherForecast fc;
     ForecastWidget fc_wdgt[FORECAST_MAX_DAILY_SIZE];
 };
@@ -24,9 +30,12 @@ struct ForecastData
 static struct ForecastData forecast_data;
 static volatile int wthr_kill_thread = 0;
 
+static void clk_btn_callback();
+
 static void forecast_update(ScreenStatePtr state)
 {
-    if (IsKeyPressed(KEY_W))
+    ui_man_poll(&forecast_data.ui_manager);
+    if (forecast_data.clk_btn->is_pressed)
     {
         transition_to_clock(state);
     }
@@ -83,6 +92,30 @@ void transition_to_wthr_state(ScreenStatePtr state)
     default_state(state);
     state->draw = forecast_draw;
     state->update = forecast_update;
+
+    if (!forecast_data.has_loaded)
+    {
+        ui_man_init(&forecast_data.ui_manager);
+
+        Texture2D* clk_texture = texture_manager_get(get_texture_man(), "clock");
+
+        float width = get_current_width();
+        float height = get_current_height();
+        Sprite* clk_sprite = create_sprite(width - 180,
+                                           height / 1.35,
+                                           clk_texture,
+                                           (TextureSet) { 10, 0 },
+                                           WHITE,
+                                           0);
+        
+        add_to_sprite_manager(forecast_data.sprite_manager, clk_sprite);
+        Button* clk_btn = malloc(sizeof(Button));
+
+        btn_init(clk_btn, clk_sprite, clk_btn_callback);
+        ui_man_add(&forecast_data.ui_manager, clk_btn);
+
+        forecast_data.clk_btn = clk_btn;
+    }
 }
 
 void* wthr_state_update_thread(void* config_data)
@@ -126,4 +159,9 @@ void* wthr_state_update_thread(void* config_data)
 
     weather_free_api(&w_api);
     return NULL;
+}
+
+static void clk_btn_callback()
+{
+    forecast_data.clk_btn->is_pressed = 1;
 }
