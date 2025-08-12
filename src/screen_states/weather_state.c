@@ -5,7 +5,6 @@
 #include <unistd.h>
 
 #include "weather_state.h"
-
 #include "clock_state.h"
 #include "../timer.h"
 #include "../info_storage.h"
@@ -17,6 +16,7 @@
 
 struct ForecastData
 {
+    int is_disabled;
     int wthr_new_data;
     int has_loaded;
     pthread_mutex_t lock;
@@ -37,6 +37,7 @@ static void forecast_update(ScreenStatePtr state)
     ui_man_poll(&forecast_data.ui_manager);
     if (forecast_data.clk_btn->is_pressed)
     {
+        forecast_data.clk_btn->is_pressed = 0;
         transition_to_clock(state);
     }
 
@@ -54,6 +55,14 @@ static void forecast_update(ScreenStatePtr state)
 static void forecast_draw(ScreenStatePtr state)
 {
     ClearBackground(BLACK);
+    if (forecast_data.is_disabled)
+    {
+        char* disabled_text = "Functionality is disabled. Check if key is correct.";
+        Vector2 center = MeasureTextEx(GetFontDefault(), disabled_text, 32, 4);
+        DrawText(disabled_text,
+                 ((float) get_current_width() / 2) - (center.x / 2),
+                 ((float) get_current_height() / 2) - (center.y / 2), 32, RED);
+    }
     draw_sprites(forecast_data.sprite_manager);
 }
 
@@ -115,6 +124,8 @@ void transition_to_wthr_state(ScreenStatePtr state)
         ui_man_add(&forecast_data.ui_manager, clk_btn);
 
         forecast_data.clk_btn = clk_btn;
+
+        forecast_data.has_loaded = 1;
     }
 }
 
@@ -122,6 +133,7 @@ void* wthr_state_update_thread(void* config_data)
 {
     if (config_data == NULL)
     {
+        forecast_data.is_disabled = 1;
         pthread_exit(NULL);
     }
 
@@ -134,6 +146,7 @@ void* wthr_state_update_thread(void* config_data)
                                cfg->longitude);
     if (res == -1)
     {
+        forecast_data.is_disabled = 1;
         pthread_exit(NULL);
     }
 

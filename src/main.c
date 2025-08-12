@@ -103,7 +103,6 @@ int main(void)
     pthread_t wthr_update_thread;
     if (code == 0)
     {
-        // TODO: Disable Weather functionality if api key is not found.
         char* api_key = ht_get(cfg_map, "API_KEY");
 
         WeatherStateConfig cfg;
