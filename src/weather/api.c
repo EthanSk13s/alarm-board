@@ -90,6 +90,15 @@ int weather_init_api(WeatherAPI* w_api, char* key, Units unit, float latitude, f
         return res;
     }
 
+    // Do a handshake to check if API key is valid.
+    WeatherForecast w_fc;
+    res = weather_get_forecast(w_api, &w_fc);
+    if (res == -1)
+    {
+        free(cfg);
+        return res;
+    }
+
     return 0;
 }
 
