@@ -1,7 +1,9 @@
+#include <curl/curl.h>
 #include <stdlib.h>
 #include <raylib.h>
 #include <pigpio.h>
 #include <pthread.h>
+#include <string.h>
 
 #include "alarm.h"
 #include "cfg.h"
@@ -12,7 +14,8 @@
 #include "managers/texture_man.h"
 #include "brightness/sensor/VEML7700_pigpio.h"
 #include "brightness/brightness_ctrl.h"
-
+#include "screen_states/weather_state.h"
+#include "weather/api.h"
 
 #define CFG_LOCATION "./config"
 
@@ -96,6 +99,29 @@ int main(void)
         return 1;
     }
 
+    CURLcode code = curl_global_init(CURL_GLOBAL_DEFAULT);
+    pthread_t wthr_update_thread;
+    if (code == 0)
+    {
+        // TODO: Disable Weather functionality if api key is not found.
+        char* api_key = ht_get(cfg_map, "API_KEY");
+
+        WeatherStateConfig cfg;
+        strncpy(cfg.key, api_key, WEATHER_API_KEY_SIZE);
+        cfg.key[strcspn(cfg.key, "\n")] = 0;
+
+        // TODO: Add units to config.
+        cfg.unit = IMPERIAL;
+
+        char* latitude = ht_get(cfg_map, "LATITUDE");
+        char* longitude = ht_get(cfg_map, "LONGITUDE");
+        cfg.latitude = atof(latitude);
+        cfg.longitude = atof(longitude);
+
+        wthr_state_init();
+        pthread_create(&wthr_update_thread, NULL, wthr_state_update_thread, (void*) &cfg);
+    }
+
     // Main game loop
     while (!WindowShouldClose())    // Detect window close button or ESC key
     {
@@ -128,8 +154,15 @@ int main(void)
         VEML7700_close();
     }
 
+    if (code == 0)
+    {
+        wthr_state_kill_thread();
+        pthread_join(wthr_update_thread, NULL);
+    }
+
+    curl_global_cleanup();
     screen_man_free();
-    cfg_save(CFG_LOCATION);
+    cfg_save(cfg_map, CFG_LOCATION);
 
     CloseWindow();        // Close window and OpenGL context
     //--------------------------------------------------------------------------------------
