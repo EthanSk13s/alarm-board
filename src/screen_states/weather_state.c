@@ -13,6 +13,7 @@
 #include "../managers/ui_man.h"
 #include "../widgets/forecast_widget.h"
 
+#define DISABLED_TEXT "Functionality is disabled. Check if key is correct."
 
 struct ForecastData
 {
@@ -57,9 +58,8 @@ static void forecast_draw(ScreenStatePtr state)
     ClearBackground(BLACK);
     if (forecast_data.is_disabled)
     {
-        char* disabled_text = "Functionality is disabled. Check if key is correct.";
-        Vector2 center = MeasureTextEx(GetFontDefault(), disabled_text, 32, 4);
-        DrawText(disabled_text,
+        Vector2 center = MeasureTextEx(GetFontDefault(), DISABLED_TEXT, 32, 4);
+        DrawText(DISABLED_TEXT,
                  ((float) get_current_width() / 2) - (center.x / 2),
                  ((float) get_current_height() / 2) - (center.y / 2), 32, RED);
     }

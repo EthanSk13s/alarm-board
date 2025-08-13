@@ -28,7 +28,7 @@ static Units handle_units(Units unit)
 {
     if (unit < KELVIN)
     {
-        return 0;
+        return KELVIN;
     } else if (unit > METRIC)
     {
         return METRIC;
