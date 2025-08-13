@@ -1,6 +1,6 @@
 EXEC_NAME=alarm-board
 CC=gcc
-CFLAGS=-lraylib -lGL -lm -lpthread -ldl -lrt -lX11 -lpigpio -lcurl -I./libs/
+CFLAGS=-O2 -lraylib -lGL -lm -lpthread -ldl -lrt -lX11 -lpigpio -lcurl -I./libs/
 BUILD_PATH= ./build
 SRC_DIR = ./src
 LIB_DIR = ./libs
