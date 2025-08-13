@@ -76,7 +76,8 @@ void wthr_state_init()
         Sprite* forecast = wdgt_forecast_init(&forecast_data.fc_wdgt[i],
                                               (Vector2) {x, y},
                                               (Vector2) {150, 400},
-                                              NULL);
+                                              NULL,
+                                              KELVIN);
         add_to_sprite_manager(forecast_data.sprite_manager, forecast);
         x += 250;
     }
@@ -134,6 +135,7 @@ void* wthr_state_update_thread(void* config_data)
     if (config_data == NULL)
     {
         forecast_data.is_disabled = 1;
+        printf("WARN: Weather configuration is null. Disabling forecasts.\n");
         pthread_exit(NULL);
     }
 
@@ -147,7 +149,13 @@ void* wthr_state_update_thread(void* config_data)
     if (res == -1)
     {
         forecast_data.is_disabled = 1;
+        printf("WARN: API key is invalid. Please check if it's correct.\n");
         pthread_exit(NULL);
+    }
+
+    for (int i = 0; i < FORECAST_MAX_DAILY_SIZE; i++)
+    {
+        forecast_data.fc_wdgt[i].unit = cfg->unit;
     }
 
     Timer update_timer;

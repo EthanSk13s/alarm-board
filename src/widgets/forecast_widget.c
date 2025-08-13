@@ -15,6 +15,7 @@
 #define ICON_SCALE 10
 
 static char* parse_wthr_icon(char* icon_id);
+static char get_temp_unit_symbol(Units unit);
 
 static void wdgt_forecast_draw(ForecastWidget* fc_wdgt)
 {
@@ -42,8 +43,9 @@ static void wdgt_forecast_draw(ForecastWidget* fc_wdgt)
 
     char temp_low[temp_size];
     char temp_high[temp_size];
-    snprintf(temp_low, temp_size, "Min:  %.2f F", fc_wdgt->temp_min);
-    snprintf(temp_high, temp_size, "Max: %.2f F", fc_wdgt->temp_max);
+    char temp_symbol = get_temp_unit_symbol(fc_wdgt->unit);
+    snprintf(temp_low, temp_size, "Min:  %.2f %c", fc_wdgt->temp_min, temp_symbol);
+    snprintf(temp_high, temp_size, "Max: %.2f %c", fc_wdgt->temp_max, temp_symbol);
 
     Vector2 center_temp = utils_center_text(GetFontDefault(),
                                             fc_wdgt->size,
@@ -87,7 +89,7 @@ static void wdgt_forecast_draw(ForecastWidget* fc_wdgt)
     EndTextureMode();
 }
 
-Sprite* wdgt_forecast_init(ForecastWidget* fc_wdgt, Vector2 pos, Vector2 size, DailyForecast* forecast)
+Sprite* wdgt_forecast_init(ForecastWidget* fc_wdgt, Vector2 pos, Vector2 size, DailyForecast* forecast, Units unit)
 {
     if (fc_wdgt == NULL)
     {
@@ -97,6 +99,7 @@ Sprite* wdgt_forecast_init(ForecastWidget* fc_wdgt, Vector2 pos, Vector2 size, D
     fc_wdgt->pos = pos;
     fc_wdgt->size = size;
     fc_wdgt->target = LoadRenderTexture(fc_wdgt->size.x, fc_wdgt->size.y);
+    fc_wdgt->unit = unit;
     if (forecast != NULL)
     {
         int res = wdgt_forecast_update(fc_wdgt, forecast);
@@ -133,6 +136,16 @@ int wdgt_forecast_update(ForecastWidget* fc_wdgt, DailyForecast* forecast)
 
     wdgt_forecast_draw(fc_wdgt);
     return 0;
+}
+
+static char get_temp_unit_symbol(Units unit)
+{
+    switch(unit)
+    {
+        case METRIC: return 'C';
+        case IMPERIAL: return 'F';
+        default: return 'K';
+    }
 }
 
 static char* parse_wthr_icon(char* icon_id)
