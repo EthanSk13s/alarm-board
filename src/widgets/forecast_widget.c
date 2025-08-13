@@ -8,7 +8,6 @@
 #include "../managers/texture_man.h"
 #include "../info_storage.h"
 #include "../utils.h"
-#include "cJSON/cJSON.h"
 
 #define WEEKDAY_FONT_SIZE 32
 #define TEMP_FONT_SIZE    20
@@ -71,6 +70,7 @@ static void wdgt_forecast_draw(ForecastWidget* fc_wdgt)
                      };
 
     BeginTextureMode(fc_wdgt->target);
+        ClearBackground(BLACK);
         DrawText(weekday, center_day.x, 0, WEEKDAY_FONT_SIZE, RED);
         DrawTexturePro(*icon, src, dest, origin, 0.0f, RED);
 
@@ -129,7 +129,6 @@ int wdgt_forecast_update(ForecastWidget* fc_wdgt, DailyForecast* forecast)
     strncpy(fc_wdgt->icon_id, forecast->weather[0].icon, FORECAST_MAX_ICON_LENGTH);
     fc_wdgt->temp_max = forecast->temp_max;
     fc_wdgt->temp_min = forecast->temp_min;
-
     fc_wdgt->dt = forecast->day.dt;
 
     wdgt_forecast_draw(fc_wdgt);
