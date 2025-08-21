@@ -5,7 +5,7 @@
 #include "info_storage.h"
 #include "sprite.h"
 
-int btn_init(Button* btn, Sprite* sprite, void (*btn_callback) (void))
+int btn_init(Button* btn, Sprite* sprite, void (*btn_callback) (void*), void* passed_data)
 {
     if (btn == NULL)
     {
@@ -14,6 +14,7 @@ int btn_init(Button* btn, Sprite* sprite, void (*btn_callback) (void))
 
     btn->is_pressed = false;
     btn->pressed_fn = btn_callback;
+    btn->passed_data = passed_data;
     if (sprite == NULL)
     {
         btn->sprite = malloc(sizeof(Sprite));
@@ -35,7 +36,7 @@ int check_pressed(Button* button)
     {
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) || IsGestureDetected(GESTURE_TAP))
         {
-            button->pressed_fn();
+            button->pressed_fn(button->passed_data);
         }
 
     }

@@ -26,11 +26,11 @@ struct AlarmData
 static struct AlarmData alarm_data;
 
 // Button callbacks
-static void clock_btn_callback();
-static void hour_btn_inc_callback();
-static void hour_btn_dec_callback();
-static void min_btn_inc_callback();
-static void min_btn_dec_callback();
+static void clock_btn_callback(void* state);
+static void hour_btn_inc_callback(void* data);
+static void hour_btn_dec_callback(void* data);
+static void min_btn_inc_callback(void* data);
+static void min_btn_dec_callback(void* data);
 
 static void update_alarm()
 {
@@ -41,12 +41,6 @@ static void update_alarm()
 static void alarm_update(ScreenStatePtr state)
 {
     ui_man_poll(&alarm_data.ui_manager);
-
-    if (alarm_data.clk_btn->is_pressed)
-    {
-        alarm_data.clk_btn->is_pressed = false;
-        transition_to_clock(state);
-    }
 }
 
 static void alarm_draw(ScreenStatePtr state)
@@ -128,11 +122,11 @@ void transition_to_alarm(ScreenStatePtr state)
         Button* min_button_inc = malloc(sizeof(Button));
         Button* clk_button = malloc(sizeof(Button));
 
-        btn_init(hour_button_dec, hour_btn_dec_sprite, hour_btn_dec_callback);
-        btn_init(hour_button_inc, hour_btn_inc_sprite, hour_btn_inc_callback);
-        btn_init(min_button_dec, minute_btn_dec_sprite, min_btn_dec_callback);
-        btn_init(min_button_inc, minute_btn_inc_sprite, min_btn_inc_callback);
-        btn_init(clk_button, clock_sprite, clock_btn_callback);
+        btn_init(hour_button_dec, hour_btn_dec_sprite, hour_btn_dec_callback, NULL);
+        btn_init(hour_button_inc, hour_btn_inc_sprite, hour_btn_inc_callback, NULL);
+        btn_init(min_button_dec, minute_btn_dec_sprite, min_btn_dec_callback, NULL);
+        btn_init(min_button_inc, minute_btn_inc_sprite, min_btn_inc_callback, NULL);
+        btn_init(clk_button, clock_sprite, clock_btn_callback, state);
 
         ui_man_add(&alarm_data.ui_manager, hour_button_dec);
         ui_man_add(&alarm_data.ui_manager, hour_button_inc);
@@ -163,19 +157,19 @@ void clean_up_alarm_state()
     alarm_data.textures_loaded = 0;
 }
 
-static void clock_btn_callback()
+static void clock_btn_callback(void* state)
 {
-    alarm_data.clk_btn->is_pressed = true;
+    transition_to_clock(state);
 }
 
-static void hour_btn_inc_callback()
+static void hour_btn_inc_callback(void* data)
 {
     int inc = alarm_data.alarm_tm.tm_hour + 1;
     set_alarm_hour(inc);
     update_alarm();
 }
 
-static void hour_btn_dec_callback()
+static void hour_btn_dec_callback(void* data)
 {
     int dec = alarm_data.alarm_tm.tm_hour - 1;
     if (dec <= -1)
@@ -186,14 +180,14 @@ static void hour_btn_dec_callback()
     update_alarm();
 }
 
-static void min_btn_inc_callback()
+static void min_btn_inc_callback(void* data)
 {
     int inc = alarm_data.alarm_tm.tm_min + 1;
     set_alarm_min(inc);
     update_alarm();
 }
 
-static void min_btn_dec_callback()
+static void min_btn_dec_callback(void* data)
 {
     int dec = alarm_data.alarm_tm.tm_min - 1;
     if (dec <= -1)

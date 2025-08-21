@@ -37,10 +37,10 @@ struct ClockData
 static struct ClockData clock_data;
 
 // Button callbacks
-static void toggle_btn_callback();
-static void alarm_btn_callback();
-static void snooze_btn_callback();
-static void wthr_btn_callback();
+static void toggle_btn_callback(void* data);
+static void alarm_btn_callback(void* state);
+static void snooze_btn_callback(void* data);
+static void wthr_btn_callback(void* state);
 
 static void clock_update(ScreenStatePtr state)
 {
@@ -56,18 +56,6 @@ static void clock_update(ScreenStatePtr state)
     if (timer_done(clock_data.snooze_timer) && !clock_data.play_alarm && clock_data.snooze_button->is_pressed)
     {
         clock_data.play_alarm = 1;
-    }
-
-    if (clock_data.alarm_button->is_pressed)
-    {
-        clock_data.alarm_button->is_pressed = false;
-        transition_to_alarm(state);
-    }
-
-    if (clock_data.wthr_button->is_pressed)
-    {
-        clock_data.wthr_button->is_pressed = false;
-        transition_to_wthr_state(state);
     }
 
     if (clock_data.toggle_button->is_pressed)
@@ -98,13 +86,6 @@ static void clock_draw(ScreenStatePtr state)
                 ((float) get_current_height() / 2) - (center.y / 2), CLOCK_FONT_SIZE, RED);
     
     draw_sprites(clock_data.sprite_manager);
-
-    /*
-    if (clock_data.play_alarm == 1)
-    {
-        draw_button(&clock_data.snooze_button);
-    }
-    */
 
     // Note: Temporary status toggle.
     if (clock_data.toggle_button->is_pressed)
@@ -181,10 +162,10 @@ void transition_to_clock(ScreenStatePtr state)
         Button* toggle_button = malloc(sizeof(Button));
         Button* wthr_button = malloc(sizeof(Button));
 
-        btn_init(alarm_button, alarm_sprite, alarm_btn_callback);
-        btn_init(snooze_button, snooze_sprite, snooze_btn_callback);
-        btn_init(toggle_button, toggle_sprite, toggle_btn_callback);
-        btn_init(wthr_button, wthr_sprite, wthr_btn_callback);
+        btn_init(alarm_button, alarm_sprite, alarm_btn_callback, state);
+        btn_init(snooze_button, snooze_sprite, snooze_btn_callback, NULL);
+        btn_init(toggle_button, toggle_sprite, toggle_btn_callback, NULL);
+        btn_init(wthr_button, wthr_sprite, wthr_btn_callback, state);
 
         ui_man_add(&clock_data.ui_manager, alarm_button);
         ui_man_add(&clock_data.ui_manager, snooze_button);
@@ -217,7 +198,7 @@ void clean_up_clock_state()
     clock_data.textures_loaded = 0;
 }
 
-static void toggle_btn_callback()
+static void toggle_btn_callback(void* data)
 {
     if (clock_data.toggle_button->is_pressed)
     {
@@ -236,17 +217,17 @@ static void toggle_btn_callback()
     }
 }
 
-static void alarm_btn_callback()
+static void alarm_btn_callback(void* state)
 {
-    clock_data.alarm_button->is_pressed = true;
+    transition_to_alarm(state);
 }
 
-static void wthr_btn_callback()
+static void wthr_btn_callback(void* state)
 {
-    clock_data.wthr_button->is_pressed = true;
+    transition_to_wthr_state(state);
 }
 
-static void snooze_btn_callback()
+static void snooze_btn_callback(void* data)
 {
     clock_data.snooze_button->is_pressed = true;
     clock_data.play_alarm = 0;

@@ -31,16 +31,11 @@ struct ForecastData
 static struct ForecastData forecast_data;
 static volatile int wthr_kill_thread = 0;
 
-static void clk_btn_callback();
+static void clk_btn_callback(void* state);
 
 static void forecast_update(ScreenStatePtr state)
 {
     ui_man_poll(&forecast_data.ui_manager);
-    if (forecast_data.clk_btn->is_pressed)
-    {
-        forecast_data.clk_btn->is_pressed = 0;
-        transition_to_clock(state);
-    }
 
     if (forecast_data.wthr_new_data == 1)
     {
@@ -121,7 +116,7 @@ void transition_to_wthr_state(ScreenStatePtr state)
         add_to_sprite_manager(forecast_data.sprite_manager, clk_sprite);
         Button* clk_btn = malloc(sizeof(Button));
 
-        btn_init(clk_btn, clk_sprite, clk_btn_callback);
+        btn_init(clk_btn, clk_sprite, clk_btn_callback, state);
         ui_man_add(&forecast_data.ui_manager, clk_btn);
 
         forecast_data.clk_btn = clk_btn;
@@ -182,7 +177,7 @@ void* wthr_state_update_thread(void* config_data)
     return NULL;
 }
 
-static void clk_btn_callback()
+static void clk_btn_callback(void* state)
 {
-    forecast_data.clk_btn->is_pressed = 1;
+    transition_to_clock(state);
 }
