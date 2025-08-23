@@ -1,6 +1,8 @@
 #include <string.h>
+#include <stdio.h>
 
 #include "forecasts.h"
+#include "cJSON/cJSON.h"
 
 static int forecast_parse_wind(const cJSON* wind_json, WindInfo* wind_info)
 {
@@ -133,6 +135,13 @@ int forecast_parse_dailies(DailyForecast* daily_fc, const cJSON* daily_json)
             daily_fc[i].day.sunrise = dt->valueint;
             daily_fc[i].day.sunset = dt->valueint;
 
+            cJSON* summary = cJSON_GetObjectItemCaseSensitive(forecast, "summary");
+            if (!cJSON_IsString(summary))
+            {
+                return -1;
+            }
+
+            strncpy(daily_fc[i].summary, summary->valuestring, FORECAST_MAX_SUMMARY_SIZE);
             res = forecast_parse_weather(forecast, daily_fc[i].weather);
             if (res == -1)
             {

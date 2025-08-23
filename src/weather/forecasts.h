@@ -6,6 +6,7 @@
 
 #define FORECAST_MAX_WEATHER_SIZE  2
 #define FORECAST_MAX_DAILY_SIZE    5
+#define FORECAST_MAX_SUMMARY_SIZE  78
 
 #define FORECAST_MAX_ICON_LENGTH 4
 
@@ -44,6 +45,7 @@ typedef struct
 {
     float temp_max;
     float temp_min;
+    char summary[FORECAST_MAX_SUMMARY_SIZE];
     Weather weather[FORECAST_MAX_WEATHER_SIZE];
     DayTimestamps day;
     WindInfo wind;
