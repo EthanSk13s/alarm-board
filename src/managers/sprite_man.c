@@ -1,5 +1,5 @@
 #include <stdlib.h>
-#include <stdio.h>
+
 #include "sprite_man.h"
 
 #define INITIAL_CAPACITY 8
@@ -90,4 +90,14 @@ void toggle_sprite_visibility(SpriteManager* sprite_manager, int id)
     {
         sprite_manager->sprites[id]->visible = 1;
     }
+}
+
+void sprite_man_swap_textures(SpriteManager* sprite_manager, int id, Texture* texture)
+{
+    if (sprite_manager->sprites[id] == NULL)
+    {
+        return;
+    }
+
+    sprite_manager->sprites[id]->texture = texture;
 }
