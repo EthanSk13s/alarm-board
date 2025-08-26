@@ -75,6 +75,7 @@ int main(void)
     texture_manager_add(texture_man, "snow", "assets/snow.png");
     texture_manager_add(texture_man, "mist", "assets/mist.png");
 
+    texture_manager_add(texture_man, "cross", "assets/cross.png");
     texture_manager_add(texture_man, "unknown", "assets/unknown.png");
 
     init_renderer(renderer, screenWidth, screenHeight);
