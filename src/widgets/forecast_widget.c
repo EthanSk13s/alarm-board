@@ -120,6 +120,13 @@ Sprite* wdgt_forecast_init(ForecastWidget* fc_wdgt, Vector2 pos, Vector2 size, D
 void wdgt_forecast_free(ForecastWidget* fc_wdgt)
 {
     UnloadRenderTexture(fc_wdgt->target);
+
+
+    if (fc_wdgt->summary != NULL)
+    {
+        free(fc_wdgt->summary);
+        fc_wdgt->summary = NULL;
+    }
 }
 
 int wdgt_forecast_update(ForecastWidget* fc_wdgt, DailyForecast* forecast)
@@ -129,6 +136,14 @@ int wdgt_forecast_update(ForecastWidget* fc_wdgt, DailyForecast* forecast)
         return -1;
     }
 
+    size_t size = strlen(forecast->summary) + 1;
+    fc_wdgt->summary = malloc(size);
+    if (fc_wdgt->summary == NULL)
+    {
+        return -1;
+    }
+
+    strncpy(fc_wdgt->summary, forecast->summary, size);
     strncpy(fc_wdgt->icon_id, forecast->weather[0].icon, FORECAST_MAX_ICON_LENGTH);
     fc_wdgt->temp_max = forecast->temp_max;
     fc_wdgt->temp_min = forecast->temp_min;

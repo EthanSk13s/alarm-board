@@ -12,6 +12,7 @@ typedef struct
     Units unit;
     float temp_max;
     float temp_min;
+    char* summary;
     char icon_id[FORECAST_MAX_ICON_LENGTH];
     time_t dt;
     Vector2 pos;
