@@ -148,6 +148,9 @@ int wdgt_forecast_update(ForecastWidget* fc_wdgt, DailyForecast* forecast)
     fc_wdgt->temp_min = forecast->temp_min;
     fc_wdgt->dt = forecast->day.dt;
 
+    fc_wdgt->sunrise = forecast->day.sunrise;
+    fc_wdgt->sunset = forecast->day.sunset;
+
     wdgt_forecast_draw(fc_wdgt);
     return 0;
 }

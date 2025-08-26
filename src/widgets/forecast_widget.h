@@ -15,6 +15,8 @@ typedef struct
     char* summary;
     char icon_id[FORECAST_MAX_ICON_LENGTH];
     time_t dt;
+    time_t sunrise;
+    time_t sunset;
     Vector2 pos;
     Vector2 size;
     RenderTexture2D target;
