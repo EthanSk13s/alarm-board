@@ -132,8 +132,8 @@ int forecast_parse_dailies(DailyForecast* daily_fc, const cJSON* daily_json)
             }
 
             daily_fc[i].day.dt = dt->valueint;
-            daily_fc[i].day.sunrise = dt->valueint;
-            daily_fc[i].day.sunset = dt->valueint;
+            daily_fc[i].day.sunrise = sunrise->valueint;
+            daily_fc[i].day.sunset = sunset->valueint;
 
             cJSON* summary = cJSON_GetObjectItemCaseSensitive(forecast, "summary");
             if (!cJSON_IsString(summary))
