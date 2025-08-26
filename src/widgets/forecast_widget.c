@@ -14,7 +14,6 @@
 
 #define ICON_SCALE 10
 
-static char* parse_wthr_icon(char* icon_id);
 static char get_temp_unit_symbol(Units unit);
 
 static void wdgt_forecast_draw(ForecastWidget* fc_wdgt)
@@ -161,54 +160,4 @@ static char get_temp_unit_symbol(Units unit)
         case IMPERIAL: return 'F';
         default: return 'K';
     }
-}
-
-static char* parse_wthr_icon(char* icon_id)
-{
-    int id = atoi(icon_id);
-    char time = icon_id[FORECAST_MAX_ICON_LENGTH - 2];
-
-    char* key;
-    switch(id)
-    {
-        case 1:
-        {
-            if (time == 'd')
-            {
-                key = "sun";
-            } else
-            {
-                key = "moon";
-            }
-        } break;
-        case 2:
-        {
-            if (time == 'd')
-            {
-                key = "day_clouded";
-            } else
-            {
-                key = "night_clouded";
-            }
-        } break;
-        case 3: key = "scattered"; break;
-        case 4: key = "broken"; break;
-        case 9: key = "shower"; break;
-        case 10:
-        {
-            if (time == 'd')
-            {
-                key = "day_rain";
-            } else
-            {
-                key = "night_rain";
-            }
-        } break;
-        case 11: key = "rainstorm"; break;
-        case 13: key = "snow"; break;
-        case 50: key = "mist"; break;
-        default: key = "unknown";
-    }
-
-    return key;
 }

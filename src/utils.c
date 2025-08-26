@@ -1,6 +1,8 @@
 #include <raylib.h>
+#include <stdlib.h>
 
 #include "utils.h"
+#include "weather/forecasts.h"
 
 int compare_color(Color x, Color y)
 {
@@ -15,6 +17,56 @@ Vector2 utils_center_text(Font font, Vector2 origin, char* text, int font_size, 
                      };
 
     return center;
+}
+
+char* parse_wthr_icon(char* icon_id)
+{
+    int id = atoi(icon_id);
+    char time = icon_id[FORECAST_MAX_ICON_LENGTH - 2];
+
+    char* key;
+    switch(id)
+    {
+        case 1:
+        {
+            if (time == 'd')
+            {
+                key = "sun";
+            } else
+            {
+                key = "moon";
+            }
+        } break;
+        case 2:
+        {
+            if (time == 'd')
+            {
+                key = "day_clouded";
+            } else
+            {
+                key = "night_clouded";
+            }
+        } break;
+        case 3: key = "scattered"; break;
+        case 4: key = "broken"; break;
+        case 9: key = "shower"; break;
+        case 10:
+        {
+            if (time == 'd')
+            {
+                key = "day_rain";
+            } else
+            {
+                key = "night_rain";
+            }
+        } break;
+        case 11: key = "rainstorm"; break;
+        case 13: key = "snow"; break;
+        case 50: key = "mist"; break;
+        default: key = "unknown";
+    }
+
+    return key;
 }
 
 // Implementatiom is mostly from:
