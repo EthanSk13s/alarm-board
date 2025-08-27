@@ -25,9 +25,8 @@ struct ForecastData
     int clk_btn_id;
     int frcst_sprite_id;
     ForecastWidget* slctd_wdgt;
-    pthread_mutex_t lock;
     SpriteManager* sprite_manager;
-    Button* clk_btn;
+    pthread_mutex_t lock;
     UIManager ui_manager;
     WeatherForecast fc;
     ForecastWidget fc_wdgt[FORECAST_MAX_DAILY_SIZE];
@@ -147,6 +146,14 @@ void clean_up_wthr_state()
     {
         wdgt_forecast_free(&forecast_data.fc_wdgt[i]);
     }
+
+    Button* curr_btn = ui_man_pop(&forecast_data.ui_manager);
+    while(curr_btn)
+    {
+        free(curr_btn);
+        curr_btn = ui_man_pop(&forecast_data.ui_manager);
+    }
+
     sprite_man_free(forecast_data.sprite_manager);
 }
 
@@ -208,8 +215,6 @@ void transition_to_wthr_state(ScreenStatePtr state)
         btn_init(crs_btn, crs_sprite, crs_btn_callback, NULL);
         ui_man_add(&forecast_data.ui_manager, clk_btn);
         ui_man_add(&forecast_data.ui_manager, crs_btn);
-
-        forecast_data.clk_btn = clk_btn;
 
         forecast_data.has_loaded = 1;
     }
