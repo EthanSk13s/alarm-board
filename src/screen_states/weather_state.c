@@ -76,7 +76,7 @@ static void forecast_draw(ScreenStatePtr state)
                                   (Rectangle) {(width / 2) + 100,
                                                    (height / 2) - 100,
                                                    500,
-                                                   250 },
+                                                   400 },
                                   32,
                                   4,
                                   1,
@@ -95,8 +95,8 @@ static void forecast_draw(ScreenStatePtr state)
                  "Sunset - %H:%M",
                  localtime(&forecast_data.slctd_wdgt->sunset));
         
-        int pos_x = width / 8;
-        int pos_y = (height / 2) + 225;
+        int pos_x = width / 10;
+        int pos_y = (height / 2) + 250;
         int font_size = 32;
         DrawText(sunrise_txt,
                  pos_x,
@@ -104,7 +104,7 @@ static void forecast_draw(ScreenStatePtr state)
                  font_size,
                  RED);
         DrawText(sunset_txt,
-                 width / 8,
+                 pos_x,
                  pos_y + 50,
                  font_size,
                  RED);
@@ -281,7 +281,8 @@ static void frcst_wdgt_btn_callback(void* data)
 
     for (int i = 0; i < FORECAST_MAX_DAILY_SIZE; i++)
     {
-        toggle_sprite_visibility(forecast_data.sprite_manager, forecast_data.fc_wdgt_ids[i]);
+        toggle_sprite_visibility(forecast_data.sprite_manager,
+                                 forecast_data.fc_wdgt_ids[i]);
     }
 
     Texture2D* new_texture = texture_manager_get(get_texture_man(),
