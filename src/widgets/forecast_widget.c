@@ -14,8 +14,6 @@
 
 #define ICON_SCALE 10
 
-static char get_temp_unit_symbol(Units unit);
-
 static void wdgt_forecast_draw(ForecastWidget* fc_wdgt)
 {
     Texture2D* icon = texture_manager_get(get_texture_man(),
@@ -42,7 +40,7 @@ static void wdgt_forecast_draw(ForecastWidget* fc_wdgt)
 
     char temp_low[temp_size];
     char temp_high[temp_size];
-    char temp_symbol = get_temp_unit_symbol(fc_wdgt->unit);
+    char temp_symbol = utils_get_temp_unit_symbol(fc_wdgt->unit);
     snprintf(temp_low, temp_size, "Min:  %.2f %c", fc_wdgt->temp_min, temp_symbol);
     snprintf(temp_high, temp_size, "Max: %.2f %c", fc_wdgt->temp_max, temp_symbol);
 
@@ -153,14 +151,4 @@ int wdgt_forecast_update(ForecastWidget* fc_wdgt, DailyForecast* forecast)
 
     wdgt_forecast_draw(fc_wdgt);
     return 0;
-}
-
-static char get_temp_unit_symbol(Units unit)
-{
-    switch(unit)
-    {
-        case METRIC: return 'C';
-        case IMPERIAL: return 'F';
-        default: return 'K';
-    }
 }

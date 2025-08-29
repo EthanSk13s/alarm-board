@@ -8,13 +8,6 @@
 
 typedef struct WeatherConfig WeatherConfig;
 
-typedef enum
-{
-    KELVIN,
-    IMPERIAL,
-    METRIC
-} Units;
-
 typedef struct
 {
     NetworkHandler net_handler;

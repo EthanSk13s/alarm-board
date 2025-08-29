@@ -69,6 +69,16 @@ char* parse_wthr_icon(char* icon_id)
     return key;
 }
 
+char utils_get_temp_unit_symbol(Units unit)
+{
+    switch(unit)
+    {
+        case METRIC: return 'C';
+        case IMPERIAL: return 'F';
+        default: return 'K';
+    }
+}
+
 // Implementatiom is mostly from:
 // https://www.raylib.com/examples/text/loader.html?name=text_rectangle_bounds
 void draw_text_with_rect_bound(Font font, const char* text, Rectangle rec, float font_size, float spacing, int word_wrap, Color tint)
@@ -180,8 +190,8 @@ void draw_text_with_rect_bound(Font font, const char* text, Rectangle rec, float
                 {
                     DrawTextCodepoint(font,
                                       codepoint,
-                            (Vector2) { rec.x + text_offset_x, rec.y + text_offset_y },
-                            font_size,
+                                      (Vector2) { rec.x + text_offset_x, rec.y + text_offset_y },
+                                      font_size,
                                       tint);
                 }
             }

@@ -4,7 +4,6 @@
 #include <raylib.h>
 
 #include "../sprite.h"
-#include "../weather/api.h"
 #include "../weather/forecasts.h"
 
 typedef struct
