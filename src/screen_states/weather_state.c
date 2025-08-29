@@ -85,26 +85,49 @@ static void forecast_draw(ScreenStatePtr state)
         char sunrise_txt[text_size];
         char sunset_txt[text_size];
 
+
+        // Take the current time here to compare the day to the sunrise.
+        // We measure here to preserve the inner state for time functions.
+        time_t now = time(NULL);
+        int curr = localtime(&now)->tm_mday;
+
+        struct tm* sunrise = localtime(&forecast_data.slctd_wdgt->sunrise);
         strftime(sunrise_txt,
                  text_size,
                  "Sunrise - %H:%M",
-                 localtime(&forecast_data.slctd_wdgt->sunrise));
+                 sunrise);
         strftime(sunset_txt,
                  text_size,
                  "Sunset - %H:%M",
                  localtime(&forecast_data.slctd_wdgt->sunset));
-        
+
         int pos_x = width / 10;
-        int pos_y = (height / 2) + 250;
+        int pos_y = (height / 2);
         int font_size = 32;
+        if (curr == sunrise->tm_mday)
+        {
+            char curr_temp[text_size];
+            snprintf(curr_temp,
+                     text_size,
+                     "Feels Like: %.2f %c\n",
+                     forecast_data.fc.current.feels_like,
+                     utils_get_temp_unit_symbol(IMPERIAL));
+            
+            DrawText(curr_temp,
+                     pos_x,
+                     pos_y - 300,
+                     font_size,
+                     RED);
+        }
+
         DrawText(sunrise_txt,
                  pos_x,
-                 pos_y,
+                 pos_y + 250,
                  font_size,
                  RED);
         DrawText(sunset_txt,
                  pos_x,
-                 pos_y + 50,
+                 pos_y + 300,
                  font_size,
                  RED);
     }
