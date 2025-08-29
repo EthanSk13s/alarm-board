@@ -12,5 +12,4 @@ For PI access and testing, pigpio requires the program to be ran under root, so 
 - Multi alarm sound selection.
 - Custom themes (Probably palette selection)
 - Expand to be a bedside dashboard.
-    - Weather forecast (Most likely using libcurl and custom JSON implementation).
-    - Reminder / To do list.
+    - ~~Weather forecast (Most likely using libcurl and custom JSON implementation)~~.
