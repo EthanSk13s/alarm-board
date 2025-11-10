@@ -6,7 +6,7 @@
 #include <unistd.h>
 
 #include "weather_state.h"
-#include "clock_state.h"
+#include "menu_state.h"
 #include "../timer.h"
 #include "../info_storage.h"
 #include "../button.h"
@@ -22,7 +22,7 @@ struct ForecastData
     int wthr_new_data;
     int has_loaded;
     int crs_btn_id;
-    int clk_btn_id;
+    int menu_btn_id;
     int frcst_sprite_id;
     ForecastWidget* slctd_wdgt;
     SpriteManager* sprite_manager;
@@ -36,7 +36,7 @@ struct ForecastData
 static struct ForecastData forecast_data;
 static volatile int wthr_kill_thread = 0;
 
-static void clk_btn_callback(void* state);
+static void menu_btn_callback(void* state);
 static void frcst_wdgt_btn_callback(void* data);
 static void crs_btn_callback(void* data);
 
@@ -194,19 +194,19 @@ void transition_to_wthr_state(ScreenStatePtr state)
 
     if (!forecast_data.has_loaded)
     {
-        Texture2D* clk_texture = texture_manager_get(get_texture_man(), "clock");
+        Texture2D* menu_texture = texture_manager_get(get_texture_man(), "hamburger");
         Texture2D* cross_texture = texture_manager_get(get_texture_man(), "cross");
         Texture2D* unkwn_texture = texture_manager_get(get_texture_man(), "unknown");
 
         float width = get_current_width();
         float height = get_current_height();
         TextureSet btn_scales = (TextureSet) { 10, 0 };
-        Sprite* clk_sprite = create_sprite(width - 180,
-                                           height / 1.35,
-                                           clk_texture,
-                                           btn_scales,
-                                           WHITE,
-                                           0);
+        Sprite* menu_sprite = create_sprite(0,
+                                            20,
+                                            menu_texture,
+                                            btn_scales,
+                                            WHITE,
+                                            0);
 
         Sprite* crs_sprite = create_sprite(width - 180,
                                            height / 1.35,
@@ -221,8 +221,8 @@ void transition_to_wthr_state(ScreenStatePtr state)
                                                   RED,
                                                   0);
 
-        forecast_data.clk_btn_id = add_to_sprite_manager(forecast_data.sprite_manager,
-                                                         clk_sprite);
+        forecast_data.menu_btn_id = add_to_sprite_manager(forecast_data.sprite_manager,
+                                                         menu_sprite);
 
         crs_sprite->visible = 0;
         forecast_data.crs_btn_id = add_to_sprite_manager(forecast_data.sprite_manager,
@@ -232,11 +232,11 @@ void transition_to_wthr_state(ScreenStatePtr state)
                                                               crnt_frcst_sprite);
 
         Button* crs_btn = malloc(sizeof(Button));
-        Button* clk_btn = malloc(sizeof(Button));
+        Button* menu_btn = malloc(sizeof(Button));
 
-        btn_init(clk_btn, clk_sprite, clk_btn_callback, state);
+        btn_init(menu_btn, menu_sprite, menu_btn_callback, state);
         btn_init(crs_btn, crs_sprite, crs_btn_callback, NULL);
-        ui_man_add(&forecast_data.ui_manager, clk_btn);
+        ui_man_add(&forecast_data.ui_manager, menu_btn);
         ui_man_add(&forecast_data.ui_manager, crs_btn);
 
         forecast_data.has_loaded = 1;
@@ -295,16 +295,16 @@ void* wthr_state_update_thread(void* config_data)
     return NULL;
 }
 
-static void clk_btn_callback(void* state)
+static void menu_btn_callback(void* state)
 {
-    transition_to_clock(state);
+    transition_to_menu(state);
 }
 
 static void frcst_wdgt_btn_callback(void* data)
 {
     ForecastWidget* fc_wdgt = (ForecastWidget*) data;
     toggle_sprite_visibility(forecast_data.sprite_manager, forecast_data.crs_btn_id);
-    toggle_sprite_visibility(forecast_data.sprite_manager, forecast_data.clk_btn_id);
+    toggle_sprite_visibility(forecast_data.sprite_manager, forecast_data.menu_btn_id);
     toggle_sprite_visibility(forecast_data.sprite_manager, forecast_data.frcst_sprite_id);
 
     for (int i = 0; i < FORECAST_MAX_DAILY_SIZE; i++)
@@ -333,7 +333,7 @@ static void crs_btn_callback(void* data)
         toggle_sprite_visibility(forecast_data.sprite_manager, forecast_data.fc_wdgt_ids[i]);
     }
 
-    toggle_sprite_visibility(forecast_data.sprite_manager, forecast_data.clk_btn_id);
+    toggle_sprite_visibility(forecast_data.sprite_manager, forecast_data.menu_btn_id);
     toggle_sprite_visibility(forecast_data.sprite_manager, forecast_data.crs_btn_id);
     toggle_sprite_visibility(forecast_data.sprite_manager, forecast_data.frcst_sprite_id);
 

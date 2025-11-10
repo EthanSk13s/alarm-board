@@ -77,6 +77,7 @@ int main(void)
 
     texture_manager_add(texture_man, "cross", "assets/cross.png");
     texture_manager_add(texture_man, "unknown", "assets/unknown.png");
+    texture_manager_add(texture_man, "hamburger", "assets/hamburger.png");
 
     init_renderer(renderer, screenWidth, screenHeight);
     init_storage(renderer, texture_man);

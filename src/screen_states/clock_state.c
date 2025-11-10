@@ -4,9 +4,9 @@
 #include <raylib.h>
 
 #include "alarm_state.h"
+#include "menu_state.h"
 #include "screen_state.h"
 #include "clock_state.h"
-#include "weather_state.h"
 #include "../button.h"
 #include "../info_storage.h"
 #include "../alarm.h"
@@ -39,8 +39,8 @@ static struct ClockData clock_data;
 // Button callbacks
 static void toggle_btn_callback(void* data);
 static void alarm_btn_callback(void* state);
+static void menu_btn_callback(void* state);
 static void snooze_btn_callback(void* data);
-static void wthr_btn_callback(void* state);
 
 static void clock_update(ScreenStatePtr state)
 {
@@ -117,7 +117,7 @@ void transition_to_clock(ScreenStatePtr state)
         Texture2D* alarm_texture = texture_manager_get(get_texture_man(), "alarm");
         Texture2D* toggle_texture = texture_manager_get(get_texture_man(), "set-alarm");
         Texture2D* snooze_texture = texture_manager_get(get_texture_man(), "snooze");
-        Texture2D* wthr_texture = texture_manager_get(get_texture_man(), "day_clouded");
+        Texture2D* menu_texture = texture_manager_get(get_texture_man(), "hamburger");
 
         TextureSet btn_texture_opts = { 10 , 0};
         float width = get_current_width();
@@ -141,16 +141,16 @@ void transition_to_clock(ScreenStatePtr state)
                                               btn_texture_opts,
                                               BLUE,
                                               0);
-        Sprite* wthr_sprite = create_sprite(0,
+        Sprite* menu_sprite = create_sprite(0,
                                             20,
-                                            wthr_texture,
+                                            menu_texture,
                                             btn_texture_opts,
                                             WHITE,
                                             0);
         
         add_to_sprite_manager(clock_data.sprite_manager, alarm_sprite);
         add_to_sprite_manager(clock_data.sprite_manager, toggle_sprite);
-        add_to_sprite_manager(clock_data.sprite_manager, wthr_sprite);
+        add_to_sprite_manager(clock_data.sprite_manager, menu_sprite);
 
         clock_data.snooze_id = add_to_sprite_manager(clock_data.sprite_manager,
                                                      snooze_sprite);
@@ -160,22 +160,22 @@ void transition_to_clock(ScreenStatePtr state)
         Button* alarm_button = malloc(sizeof(Button));
         Button* snooze_button = malloc(sizeof(Button));
         Button* toggle_button = malloc(sizeof(Button));
-        Button* wthr_button = malloc(sizeof(Button));
+        Button* menu_button = malloc(sizeof(Button));
 
         btn_init(alarm_button, alarm_sprite, alarm_btn_callback, state);
         btn_init(snooze_button, snooze_sprite, snooze_btn_callback, NULL);
         btn_init(toggle_button, toggle_sprite, toggle_btn_callback, NULL);
-        btn_init(wthr_button, wthr_sprite, wthr_btn_callback, state);
+        btn_init(menu_button, menu_sprite, menu_btn_callback, state);
 
         ui_man_add(&clock_data.ui_manager, alarm_button);
         ui_man_add(&clock_data.ui_manager, snooze_button);
         ui_man_add(&clock_data.ui_manager, toggle_button);
-        ui_man_add(&clock_data.ui_manager, wthr_button);
+        ui_man_add(&clock_data.ui_manager, menu_button);
 
         clock_data.alarm_button = alarm_button;
         clock_data.snooze_button = snooze_button;
         clock_data.toggle_button = toggle_button;
-        clock_data.wthr_button = wthr_button;
+        clock_data.wthr_button = menu_button;
 
         clock_data.textures_loaded = 1;
     }
@@ -222,9 +222,9 @@ static void alarm_btn_callback(void* state)
     transition_to_alarm(state);
 }
 
-static void wthr_btn_callback(void* state)
+static void menu_btn_callback(void* state)
 {
-    transition_to_wthr_state(state);
+    transition_to_menu(state);
 }
 
 static void snooze_btn_callback(void* data)
