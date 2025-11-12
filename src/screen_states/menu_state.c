@@ -49,9 +49,10 @@ void transition_to_menu(ScreenStatePtr state)
 
         Texture2D* wthr_texture = texture_manager_get(get_texture_man(), "day_clouded");
         Texture2D* clock_texture = texture_manager_get(get_texture_man(), "clock");
-        Texture2D* amb_texture = texture_manager_get(get_texture_man(), "unknown");
+        Texture2D* amb_texture = texture_manager_get(get_texture_man(), "mist");
 
         TextureSet btn_texture_opts = { 10 , 0 };
+        TextureSet amb_texture_opts = { 10 , 90 };
         // TODO: Create this button bar separately. 80 is from total bar width from
         // combining textures.
         int btn_bar_x = (width / 2) - (480 / 2);
@@ -71,7 +72,7 @@ void transition_to_menu(ScreenStatePtr state)
         Sprite* amb_sprite = create_sprite(btn_bar_x + 320,
                                            btn_bar_y - 80,
                                            amb_texture,
-                                           btn_texture_opts,
+                                           amb_texture_opts,
                                            WHITE,
                                            0);
 
