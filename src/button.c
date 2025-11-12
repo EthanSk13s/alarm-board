@@ -36,7 +36,10 @@ int check_pressed(Button* button)
     {
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) || IsGestureDetected(GESTURE_TAP))
         {
-            button->pressed_fn(button->passed_data);
+            if (button->pressed_fn != NULL)
+            {
+                button->pressed_fn(button->passed_data);
+            }
         }
 
     }
