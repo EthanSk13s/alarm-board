@@ -76,6 +76,7 @@ int main(void)
     texture_manager_add(texture_man, "mist", "assets/mist.png");
 
     texture_manager_add(texture_man, "cross", "assets/cross.png");
+    texture_manager_add(texture_man, "check", "assets/checkmark.png");
     texture_manager_add(texture_man, "unknown", "assets/unknown.png");
     texture_manager_add(texture_man, "hamburger", "assets/hamburger.png");
 
