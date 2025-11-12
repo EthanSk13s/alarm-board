@@ -64,6 +64,7 @@ void transition_to_amb_state(ScreenStatePtr state)
         Texture2D* cross_txt = texture_manager_get(txt_manager, "cross");
         Texture2D* rain_txt = texture_manager_get(txt_manager, "day_rain");
         Texture2D* menu_txt = texture_manager_get(txt_manager, "hamburger");
+        Texture2D* check_txt = texture_manager_get(txt_manager, "check");
 
         TextureSet btn_opts = { 10 , 0 };
         TextureSet up_arrow_opts = { 4, 0 };
@@ -99,10 +100,18 @@ void transition_to_amb_state(ScreenStatePtr state)
                                                       up_arrow_opts,
                                                       BLUE,
                                                       0);
+
         
         Sprite* menu_sprite = create_sprite(0, 20, menu_txt, btn_opts, WHITE, 0);
         Sprite* rain_sprite = create_sprite(0, 180, rain_txt, btn_opts, WHITE, 0);
 
+        float status_y = (float) height / 2 + (center.y / 2) + 60;
+        Sprite* check_sprite = create_sprite(min_x,
+                                          status_y,
+                                          check_txt,
+                                          btn_opts,
+                                          WHITE,
+                                          0);
         Sprite* cross_sprite = create_sprite(hour_x,
                                              (float) height / 2 + (center.y / 2) + 60,
                                              cross_txt,
@@ -118,6 +127,7 @@ void transition_to_amb_state(ScreenStatePtr state)
         add_to_sprite_manager(amb_data.sprite_manager, menu_sprite);
         add_to_sprite_manager(amb_data.sprite_manager, rain_sprite);
         add_to_sprite_manager(amb_data.sprite_manager, cross_sprite);
+        add_to_sprite_manager(amb_data.sprite_manager, check_sprite);
 
         Button* hour_btn_dec = malloc(sizeof(Button));
         Button* hour_btn_inc = malloc(sizeof(Button));
@@ -127,6 +137,7 @@ void transition_to_amb_state(ScreenStatePtr state)
         Button* menu_btn = malloc(sizeof(Button));
         Button* rain_btn = malloc(sizeof(Button));
         Button* cross_btn = malloc(sizeof(Button));
+        Button* check_btn = malloc(sizeof(Button));
 
         btn_init(hour_btn_dec, hour_btn_dec_sprite, NULL, NULL);
         btn_init(hour_btn_inc, hour_btn_inc_sprite, NULL, NULL);
@@ -136,6 +147,7 @@ void transition_to_amb_state(ScreenStatePtr state)
         btn_init(menu_btn, menu_sprite, menu_btn_callback, state);
         btn_init(rain_btn, rain_sprite, NULL, NULL);
         btn_init(cross_btn, cross_sprite, NULL, NULL);
+        btn_init(check_btn, check_sprite, NULL, NULL);
 
         amb_data.btns_to_hide[0] = ui_man_add(&amb_data.ui_manager, hour_btn_dec);
         amb_data.btns_to_hide[1] = ui_man_add(&amb_data.ui_manager, hour_btn_inc);
@@ -144,6 +156,7 @@ void transition_to_amb_state(ScreenStatePtr state)
         amb_data.btns_to_hide[4] = ui_man_add(&amb_data.ui_manager, menu_btn);
         amb_data.btns_to_hide[5] = ui_man_add(&amb_data.ui_manager, rain_btn);
         amb_data.btns_to_hide[6] = ui_man_add(&amb_data.ui_manager, cross_btn);
+        amb_data.btns_to_hide[7] = ui_man_add(&amb_data.ui_manager, check_btn);
 
         amb_data.textures_loaded = 1;
     }
