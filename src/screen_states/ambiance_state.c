@@ -11,6 +11,9 @@
 #include "../managers/texture_man.h"
 #include "../managers/ui_man.h"
 
+#define SECONDS_IN_MINUTE 60
+#define SECONDS_IN_HOUR 3600
+
 struct AmbData
 {
     int textures_loaded;
@@ -22,12 +25,30 @@ struct AmbData
     UIManager ui_manager;
 };
 
+static void update_timer_str(char* str, int timer_val, int strlen)
+{
+    if (timer_val >= 0)
+    {
+        int hour = timer_val / SECONDS_IN_HOUR;
+        int min = (timer_val / SECONDS_IN_MINUTE) % SECONDS_IN_MINUTE;
+
+        snprintf(str, strlen, "%02d:%02d", hour, min);
+    }
+}
+
 static struct AmbData amb_data = { 0 };
+
 static void menu_btn_callback(void* state);
+static void clear_btn_callback(void* data);
+static void hour_inc_btn_callback(void* data);
+static void hour_dec_btn_callback(void* data);
+static void min_inc_btn_callback(void* data);
+static void min_dec_btn_callback(void* data);
 
 void amb_update(ScreenStatePtr state)
 {
     ui_man_poll(&amb_data.ui_manager);
+    update_timer_str(amb_data.timer_str, amb_data.timer_val, 8);
 }
 
 void amb_draw(ScreenStatePtr state)
@@ -139,14 +160,14 @@ void transition_to_amb_state(ScreenStatePtr state)
         Button* cross_btn = malloc(sizeof(Button));
         Button* check_btn = malloc(sizeof(Button));
 
-        btn_init(hour_btn_dec, hour_btn_dec_sprite, NULL, NULL);
-        btn_init(hour_btn_inc, hour_btn_inc_sprite, NULL, NULL);
-        btn_init(min_btn_dec, minute_btn_dec_sprite, NULL, NULL);
-        btn_init(min_btn_inc, minute_btn_inc_sprite, NULL, NULL);
+        btn_init(hour_btn_dec, hour_btn_dec_sprite, hour_dec_btn_callback, NULL);
+        btn_init(hour_btn_inc, hour_btn_inc_sprite, hour_inc_btn_callback, NULL);
+        btn_init(min_btn_dec, minute_btn_dec_sprite, min_dec_btn_callback, NULL);
+        btn_init(min_btn_inc, minute_btn_inc_sprite, min_inc_btn_callback, NULL);
 
         btn_init(menu_btn, menu_sprite, menu_btn_callback, state);
         btn_init(rain_btn, rain_sprite, NULL, NULL);
-        btn_init(cross_btn, cross_sprite, NULL, NULL);
+        btn_init(cross_btn, cross_sprite, clear_btn_callback, NULL);
         btn_init(check_btn, check_sprite, NULL, NULL);
 
         amb_data.btns_to_hide[0] = ui_man_add(&amb_data.ui_manager, hour_btn_dec);
@@ -165,4 +186,29 @@ void transition_to_amb_state(ScreenStatePtr state)
 static void menu_btn_callback(void* state)
 {
     transition_to_menu(state);
+}
+
+static void hour_inc_btn_callback(void* data)
+{
+    amb_data.timer_val += SECONDS_IN_HOUR;
+}
+
+static void hour_dec_btn_callback(void* data)
+{
+    amb_data.timer_val -= SECONDS_IN_HOUR;
+}
+
+static void min_inc_btn_callback(void* data)
+{
+    amb_data.timer_val += SECONDS_IN_MINUTE;
+}
+
+static void min_dec_btn_callback(void* data)
+{
+    amb_data.timer_val -= SECONDS_IN_MINUTE;
+}
+
+static void clear_btn_callback(void* data)
+{
+    amb_data.timer_val = 0;
 }
