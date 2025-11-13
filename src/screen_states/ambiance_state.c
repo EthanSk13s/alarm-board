@@ -140,15 +140,23 @@ void transition_to_amb_state(ScreenStatePtr state)
                                              WHITE,
                                              0);
 
-        add_to_sprite_manager(amb_data.sprite_manager, hour_btn_dec_sprite);
-        add_to_sprite_manager(amb_data.sprite_manager, hour_btn_inc_sprite);
-        add_to_sprite_manager(amb_data.sprite_manager, minute_btn_dec_sprite);
-        add_to_sprite_manager(amb_data.sprite_manager, minute_btn_inc_sprite);
+        amb_data.btns_to_hide[0] = add_to_sprite_manager(amb_data.sprite_manager,
+                                                         hour_btn_dec_sprite);
+        amb_data.btns_to_hide[1] = add_to_sprite_manager(amb_data.sprite_manager,
+                                                         hour_btn_inc_sprite);
+        amb_data.btns_to_hide[2] = add_to_sprite_manager(amb_data.sprite_manager,
+                                                         minute_btn_dec_sprite);
+        amb_data.btns_to_hide[3] = add_to_sprite_manager(amb_data.sprite_manager,
+                                                         minute_btn_inc_sprite);
 
-        add_to_sprite_manager(amb_data.sprite_manager, menu_sprite);
-        add_to_sprite_manager(amb_data.sprite_manager, rain_sprite);
-        add_to_sprite_manager(amb_data.sprite_manager, cross_sprite);
-        add_to_sprite_manager(amb_data.sprite_manager, check_sprite);
+        amb_data.btns_to_hide[4] = add_to_sprite_manager(amb_data.sprite_manager,
+                                                         menu_sprite);
+        amb_data.btns_to_hide[5] = add_to_sprite_manager(amb_data.sprite_manager,
+                                                         rain_sprite);
+        amb_data.btns_to_hide[6] = add_to_sprite_manager(amb_data.sprite_manager,
+                                                         cross_sprite);
+        amb_data.btns_to_hide[7] = add_to_sprite_manager(amb_data.sprite_manager,
+                                                         check_sprite);
 
         Button* hour_btn_dec = malloc(sizeof(Button));
         Button* hour_btn_inc = malloc(sizeof(Button));
@@ -170,14 +178,14 @@ void transition_to_amb_state(ScreenStatePtr state)
         btn_init(cross_btn, cross_sprite, clear_btn_callback, NULL);
         btn_init(check_btn, check_sprite, NULL, NULL);
 
-        amb_data.btns_to_hide[0] = ui_man_add(&amb_data.ui_manager, hour_btn_dec);
-        amb_data.btns_to_hide[1] = ui_man_add(&amb_data.ui_manager, hour_btn_inc);
-        amb_data.btns_to_hide[2] = ui_man_add(&amb_data.ui_manager, min_btn_dec);
-        amb_data.btns_to_hide[3] = ui_man_add(&amb_data.ui_manager, min_btn_inc);
-        amb_data.btns_to_hide[4] = ui_man_add(&amb_data.ui_manager, menu_btn);
-        amb_data.btns_to_hide[5] = ui_man_add(&amb_data.ui_manager, rain_btn);
-        amb_data.btns_to_hide[6] = ui_man_add(&amb_data.ui_manager, cross_btn);
-        amb_data.btns_to_hide[7] = ui_man_add(&amb_data.ui_manager, check_btn);
+        ui_man_add(&amb_data.ui_manager, hour_btn_dec);
+        ui_man_add(&amb_data.ui_manager, hour_btn_inc);
+        ui_man_add(&amb_data.ui_manager, min_btn_dec);
+        ui_man_add(&amb_data.ui_manager, min_btn_inc);
+        ui_man_add(&amb_data.ui_manager, menu_btn);
+        ui_man_add(&amb_data.ui_manager, rain_btn);
+        ui_man_add(&amb_data.ui_manager, cross_btn);
+        ui_man_add(&amb_data.ui_manager, check_btn);
 
         amb_data.textures_loaded = 1;
     }
