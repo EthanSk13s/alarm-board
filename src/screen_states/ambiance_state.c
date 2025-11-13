@@ -17,15 +17,26 @@
 struct AmbData
 {
     int textures_loaded;
+    int timer_started;
     int timer_val;
     char timer_str[8];
     SpriteManager* sprite_manager;
     int btns_to_hide[10];
+    // TODO: Move timer to info storage to let it play in the background.
     Timer amb_timer;
     UIManager ui_manager;
 };
 
-static void update_timer_str(char* str, int timer_val, int strlen)
+static void toggle_btns(const struct AmbData* amb_data)
+{
+    for (int i = 0; i < 6; i++)
+    {
+        toggle_sprite_visibility(amb_data->sprite_manager,
+                                 amb_data->btns_to_hide[i]);
+    }
+}
+
+static void update_timer_str(char* str, const int timer_val, const int strlen)
 {
     if (timer_val >= 0)
     {
@@ -39,6 +50,7 @@ static void update_timer_str(char* str, int timer_val, int strlen)
 static struct AmbData amb_data = { 0 };
 
 static void menu_btn_callback(void* state);
+static void start_btn_callback(void* data);
 static void clear_btn_callback(void* data);
 static void hour_inc_btn_callback(void* data);
 static void hour_dec_btn_callback(void* data);
@@ -48,7 +60,22 @@ static void min_dec_btn_callback(void* data);
 void amb_update(ScreenStatePtr state)
 {
     ui_man_poll(&amb_data.ui_manager);
-    update_timer_str(amb_data.timer_str, amb_data.timer_val, 8);
+
+    if (amb_data.timer_started)
+    {
+        if (timer_done(amb_data.amb_timer))
+        {
+            toggle_btns(&amb_data);
+            amb_data.timer_started = 0;
+        }
+
+        update_timer_str(amb_data.timer_str,
+                         amb_data.timer_val - timer_get_elapsed(amb_data.amb_timer),
+                         8);
+    } else
+    {
+        update_timer_str(amb_data.timer_str, amb_data.timer_val, 8);
+    }
 }
 
 void amb_draw(ScreenStatePtr state)
@@ -150,13 +177,12 @@ void transition_to_amb_state(ScreenStatePtr state)
                                                          minute_btn_inc_sprite);
 
         amb_data.btns_to_hide[4] = add_to_sprite_manager(amb_data.sprite_manager,
-                                                         menu_sprite);
-        amb_data.btns_to_hide[5] = add_to_sprite_manager(amb_data.sprite_manager,
                                                          rain_sprite);
-        amb_data.btns_to_hide[6] = add_to_sprite_manager(amb_data.sprite_manager,
-                                                         cross_sprite);
-        amb_data.btns_to_hide[7] = add_to_sprite_manager(amb_data.sprite_manager,
+        amb_data.btns_to_hide[5] = add_to_sprite_manager(amb_data.sprite_manager,
                                                          check_sprite);
+        
+        add_to_sprite_manager(amb_data.sprite_manager, menu_sprite);
+        add_to_sprite_manager(amb_data.sprite_manager, cross_sprite);
 
         Button* hour_btn_dec = malloc(sizeof(Button));
         Button* hour_btn_inc = malloc(sizeof(Button));
@@ -176,7 +202,7 @@ void transition_to_amb_state(ScreenStatePtr state)
         btn_init(menu_btn, menu_sprite, menu_btn_callback, state);
         btn_init(rain_btn, rain_sprite, NULL, NULL);
         btn_init(cross_btn, cross_sprite, clear_btn_callback, NULL);
-        btn_init(check_btn, check_sprite, NULL, NULL);
+        btn_init(check_btn, check_sprite, start_btn_callback, NULL);
 
         ui_man_add(&amb_data.ui_manager, hour_btn_dec);
         ui_man_add(&amb_data.ui_manager, hour_btn_inc);
@@ -219,4 +245,18 @@ static void min_dec_btn_callback(void* data)
 static void clear_btn_callback(void* data)
 {
     amb_data.timer_val = 0;
+
+    if (amb_data.timer_started)
+    {
+        toggle_btns(&amb_data);
+        amb_data.timer_started = 0;
+    }
+}
+
+static void start_btn_callback(void* data)
+{
+    toggle_btns(&amb_data);
+    timer_start(&amb_data.amb_timer, amb_data.timer_val);
+
+    amb_data.timer_started = 1;
 }
