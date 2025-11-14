@@ -9,7 +9,6 @@
 #include "clock_state.h"
 #include "../button.h"
 #include "../info_storage.h"
-#include "../alarm.h"
 #include "../utils.h"
 #include "../sprite.h"
 #include "../timer.h"
@@ -68,9 +67,10 @@ static void clock_update(ScreenStatePtr state)
             }
         }
 
-        if (clock_data.play_alarm && !is_alarm_playing())
+        MusicHandler alarm_h = get_alarm_music();
+        if (clock_data.play_alarm && !music_is_playing(&alarm_h))
         {
-            play_alarm();
+            music_play(&alarm_h);
             toggle_sprite_visibility(clock_data.sprite_manager, clock_data.snooze_id);
         }
     }
@@ -206,10 +206,11 @@ static void toggle_btn_callback(void* data)
         clock_data.snooze_button->is_pressed = false;
         clock_data.play_alarm = 0;
 
-        if (is_alarm_playing())
+        MusicHandler alarm_h = get_alarm_music();
+        if (music_is_playing(&alarm_h))
         {
             toggle_sprite_visibility(clock_data.sprite_manager, clock_data.snooze_id);
-            stop_alarm();
+            music_stop(&alarm_h);
         }
     } else
     {
@@ -231,7 +232,11 @@ static void snooze_btn_callback(void* data)
 {
     clock_data.snooze_button->is_pressed = true;
     clock_data.play_alarm = 0;
+
     timer_start(&clock_data.snooze_timer, SNOOZE_TIME);
-    stop_alarm();
+
+    MusicHandler alarm_h = get_alarm_music();
+    music_stop(&alarm_h);
+
     toggle_sprite_visibility(clock_data.sprite_manager, clock_data.snooze_id);
 }

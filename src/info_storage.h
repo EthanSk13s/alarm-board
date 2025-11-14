@@ -5,21 +5,24 @@
 #include <time.h>
 #include "renderer.h"
 #include "managers/texture_man.h"
+#include "music.h"
 
 #define CLOCK_FONT_SIZE 256
 
 struct InfoStorage
 {
-    Renderer* renderer;
-    TextureManager* texture_man;
     int height;
     int width;
     struct tm alarm_time;
+    Renderer* renderer;
+    TextureManager* texture_man;
+    MusicHandler alarm;
 };
 
 void init_storage(Renderer* renderer, TextureManager* texture_man);
 int get_current_height();
 int get_current_width();
+MusicHandler get_alarm_music();
 Vector2 get_virt_mouse();
 struct tm get_alarm();
 TextureManager* get_texture_man();

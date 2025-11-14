@@ -5,9 +5,9 @@
 #include <pthread.h>
 #include <string.h>
 
-#include "alarm.h"
 #include "cfg.h"
 #include "ds/hash_table.h"
+#include "music.h"
 #include "renderer.h"
 #include "info_storage.h"
 #include "managers/screen_man.h"
@@ -35,11 +35,6 @@ int main(void)
     SetWindowState(flags);
     InitAudioDevice();              // Initialize audio device
     int result = gpioInitialise();
-
-    if (load_alarm() == 0)
-    {
-        return 1;
-    }
 
     pthread_t brightness_thread;
     if (result >= 0)
@@ -127,10 +122,12 @@ int main(void)
     // Main game loop
     while (!WindowShouldClose())    // Detect window close button or ESC key
     {
-        if (is_alarm_playing())
+        MusicHandler music_h = get_alarm_music();
+        if (music_is_playing(&music_h))
         {
-            update_stream();
+            music_update(&music_h);
         }
+
         update_virt_mouse(renderer);
         if (IsWindowResized())
         {

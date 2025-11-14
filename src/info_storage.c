@@ -1,8 +1,10 @@
 #include <raylib.h>
 #include <time.h>
+#include <stdio.h>
 
 #include "info_storage.h"
 #include "renderer.h"
+
 struct InfoStorage storage;
 
 void init_storage(Renderer* renderer, TextureManager* texture_man)
@@ -12,6 +14,19 @@ void init_storage(Renderer* renderer, TextureManager* texture_man)
 
     storage.alarm_time.tm_hour = 0;
     storage.alarm_time.tm_min = 0;
+
+    int res = music_init(&storage.alarm, "assets/alarm.mp3");
+    if (res == -1)
+    {
+        printf("ERROR: Alarm not found.\n");
+    }
+
+    music_set_vol(&storage.alarm, 0.25);
+}
+
+MusicHandler get_alarm_music()
+{
+    return storage.alarm;
 }
 
 int get_current_height()
