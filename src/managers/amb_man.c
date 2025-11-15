@@ -1,6 +1,7 @@
 #include <stdlib.h>
 
 #include "amb_man.h"
+#include "../timer.h"
 #include "../ambiance/rain.h"
 
 int amb_man_init(AmbianceManager* amb_man)
@@ -12,6 +13,7 @@ int amb_man_init(AmbianceManager* amb_man)
 
     amb_man->amb = malloc(sizeof(struct Ambiance));
 
+    amb_man->has_loaded = 0;
     amb_man->amb->max_length = -1;
     amb_man->amb->min_length = -1;
     amb_man->amb->max_loops = -1;
@@ -28,6 +30,11 @@ int amb_man_is_done(AmbianceManager *amb_man)
 void amb_man_update(AmbianceManager* amb_man)
 {
     if (amb_man == NULL)
+    {
+        return;
+    }
+
+    if (!amb_man->has_loaded)
     {
         return;
     }
@@ -86,6 +93,7 @@ void amb_man_stop(AmbianceManager* amb_man)
 
 void amb_man_switch_to_rain(AmbianceManager* amb_man)
 {
+    amb_man->has_loaded = 1;
     if (amb_man == NULL)
     {
         return;

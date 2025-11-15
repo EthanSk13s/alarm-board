@@ -6,6 +6,7 @@
 
 typedef struct
 {
+    int has_loaded;
     Timer amb_timer;
     struct Ambiance* amb;
 } AmbianceManager;
