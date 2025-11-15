@@ -19,6 +19,13 @@ Vector2 utils_center_text(Font font, Vector2 origin, char* text, int font_size, 
     return center;
 }
 
+int rand_range(int min, int max)
+{
+    int r = rand() % ((max + 1) - min) + min;
+
+    return r;
+}
+
 char* parse_wthr_icon(char* icon_id)
 {
     int id = atoi(icon_id);

@@ -24,6 +24,7 @@ typedef struct
     size_t max_length;
 } Buffer;
 
+int rand_range(int min, int max);
 int compare_color(Color x, Color y);
 Vector2 utils_center_text(Font font, Vector2 origin, char* text, int font_size, int spacing);
 char* parse_wthr_icon(char* icon_id);
