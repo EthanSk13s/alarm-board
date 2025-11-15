@@ -1,7 +1,5 @@
 #include <stdlib.h>
 
-#include <time.h>
-
 #include "rain.h"
 #include "../utils.h"
 
@@ -19,7 +17,6 @@
 
 static void update_rain_amb(AmbiancePtr amb)
 {
-    srand(time(NULL));
     int r = rand() % 100;
 
     if (r > DEFAULT_RAIN_PROB)
