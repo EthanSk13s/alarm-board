@@ -78,7 +78,7 @@ float music_get_pos(MusicHandler* music_h)
 
 int music_is_playing(MusicHandler* music_h)
 {
-    if (music_h == NULL || IsMusicValid(music_h->music))
+    if (music_h == NULL)
     {
         return -1;
     }
