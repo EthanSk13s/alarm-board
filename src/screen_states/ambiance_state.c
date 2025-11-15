@@ -22,8 +22,6 @@ struct AmbData
     char timer_str[8];
     SpriteManager* sprite_manager;
     int btns_to_hide[10];
-    // TODO: Move timer to info storage to let it play in the background.
-    Timer amb_timer;
     UIManager ui_manager;
 };
 
@@ -50,6 +48,7 @@ static void update_timer_str(char* str, const int timer_val, const int strlen)
 static struct AmbData amb_data = { 0 };
 
 static void menu_btn_callback(void* state);
+static void rain_btn_callback(void* data);
 static void start_btn_callback(void* data);
 static void clear_btn_callback(void* data);
 static void hour_inc_btn_callback(void* data);
@@ -63,14 +62,15 @@ void amb_update(ScreenStatePtr state)
 
     if (amb_data.timer_started)
     {
-        if (timer_done(amb_data.amb_timer))
+        AmbianceManager* amb_man = get_amb_man();
+        if (amb_man_is_done(amb_man))
         {
             toggle_btns(&amb_data);
             amb_data.timer_started = 0;
         }
 
         update_timer_str(amb_data.timer_str,
-                         amb_data.timer_val - timer_get_elapsed(amb_data.amb_timer),
+                         amb_data.timer_val - timer_get_elapsed(amb_man->amb_timer),
                          8);
     } else
     {
@@ -200,7 +200,7 @@ void transition_to_amb_state(ScreenStatePtr state)
         btn_init(min_btn_inc, minute_btn_inc_sprite, min_inc_btn_callback, NULL);
 
         btn_init(menu_btn, menu_sprite, menu_btn_callback, state);
-        btn_init(rain_btn, rain_sprite, NULL, NULL);
+        btn_init(rain_btn, rain_sprite, rain_btn_callback, NULL);
         btn_init(cross_btn, cross_sprite, clear_btn_callback, NULL);
         btn_init(check_btn, check_sprite, start_btn_callback, NULL);
 
@@ -250,13 +250,24 @@ static void clear_btn_callback(void* data)
     {
         toggle_btns(&amb_data);
         amb_data.timer_started = 0;
+
+        AmbianceManager* amb_man = get_amb_man();
+        amb_man_stop(amb_man);
     }
 }
 
 static void start_btn_callback(void* data)
 {
     toggle_btns(&amb_data);
-    timer_start(&amb_data.amb_timer, amb_data.timer_val);
+    AmbianceManager* amb_man = get_amb_man();
+    amb_man_start(amb_man, amb_data.timer_val);
 
     amb_data.timer_started = 1;
+}
+
+static void rain_btn_callback(void* data)
+{
+    // TODO: Add button feedback.
+    AmbianceManager* amb_man = get_amb_man();
+    amb_man_switch_to_rain(amb_man);
 }
