@@ -3,14 +3,16 @@
 #include <stdio.h>
 
 #include "info_storage.h"
+#include "managers/amb_man.h"
 #include "renderer.h"
 
 struct InfoStorage storage;
 
-void init_storage(Renderer* renderer, TextureManager* texture_man)
+void init_storage(Renderer* renderer, TextureManager* texture_man, AmbianceManager* amb_man)
 {
     storage.texture_man = texture_man;
     storage.renderer = renderer;
+    storage.amb_man = amb_man;
 
     storage.alarm_time.tm_hour = 0;
     storage.alarm_time.tm_min = 0;
@@ -27,6 +29,11 @@ void init_storage(Renderer* renderer, TextureManager* texture_man)
 MusicHandler get_alarm_music()
 {
     return storage.alarm;
+}
+
+AmbianceManager* get_amb_man()
+{
+    return storage.amb_man;
 }
 
 int get_current_height()

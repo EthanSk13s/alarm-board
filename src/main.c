@@ -7,6 +7,7 @@
 
 #include "cfg.h"
 #include "ds/hash_table.h"
+#include "managers/amb_man.h"
 #include "music.h"
 #include "renderer.h"
 #include "info_storage.h"
@@ -76,7 +77,10 @@ int main(void)
     texture_manager_add(texture_man, "hamburger", "assets/hamburger.png");
 
     init_renderer(renderer, screenWidth, screenHeight);
-    init_storage(renderer, texture_man);
+
+    AmbianceManager* amb_man = malloc(sizeof(AmbianceManager));
+    amb_man_init(amb_man);
+    init_storage(renderer, texture_man, amb_man);
 
     ScreenManager* screen_man = init_screen_man();
     if (screen_man == NULL)
@@ -123,10 +127,13 @@ int main(void)
     while (!WindowShouldClose())    // Detect window close button or ESC key
     {
         MusicHandler music_h = get_alarm_music();
+        AmbianceManager* amb_man = get_amb_man();
         if (music_is_playing(&music_h))
         {
             music_update(&music_h);
         }
+
+        amb_man_update(amb_man);
 
         update_virt_mouse(renderer);
         if (IsWindowResized())
@@ -145,6 +152,7 @@ int main(void)
     //--------------------------------------------------------------------------------------
     free_renderer(renderer);
     free_texture_manager(texture_man);
+    amb_man_free(amb_man);
 
     if (result >= 0)
     {
