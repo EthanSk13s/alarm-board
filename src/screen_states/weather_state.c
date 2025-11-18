@@ -6,13 +6,14 @@
 #include <unistd.h>
 
 #include "weather_state.h"
-#include "menu_state.h"
+
 #include "../timer.h"
 #include "../info_storage.h"
 #include "../button.h"
 #include "../managers/sprite_man.h"
 #include "../managers/ui_man.h"
 #include "../widgets/forecast_widget.h"
+#include "../widgets/template_buttons.h"
 
 #define DISABLED_TEXT "Functionality is disabled. Check if key is correct."
 
@@ -36,7 +37,6 @@ struct ForecastData
 static struct ForecastData forecast_data;
 static volatile int wthr_kill_thread = 0;
 
-static void menu_btn_callback(void* state);
 static void frcst_wdgt_btn_callback(void* data);
 static void crs_btn_callback(void* data);
 
@@ -194,19 +194,12 @@ void transition_to_wthr_state(ScreenStatePtr state)
 
     if (!forecast_data.has_loaded)
     {
-        Texture2D* menu_texture = texture_manager_get(get_texture_man(), "hamburger");
         Texture2D* cross_texture = texture_manager_get(get_texture_man(), "cross");
         Texture2D* unkwn_texture = texture_manager_get(get_texture_man(), "unknown");
 
         float width = get_current_width();
         float height = get_current_height();
         TextureSet btn_scales = (TextureSet) { 10, 0 };
-        Sprite* menu_sprite = create_sprite(0,
-                                            20,
-                                            menu_texture,
-                                            btn_scales,
-                                            WHITE,
-                                            0);
 
         Sprite* crs_sprite = create_sprite(width - 180,
                                            height / 1.35,
@@ -221,8 +214,12 @@ void transition_to_wthr_state(ScreenStatePtr state)
                                                   RED,
                                                   0);
 
-        forecast_data.menu_btn_id = add_to_sprite_manager(forecast_data.sprite_manager,
-                                                         menu_sprite);
+        forecast_data.menu_btn_id = button_menu(get_texture_man(),
+                                                forecast_data.sprite_manager,
+                                                &forecast_data.ui_manager,
+                                                state,
+                                                0,
+                                                20);
 
         crs_sprite->visible = 0;
         forecast_data.crs_btn_id = add_to_sprite_manager(forecast_data.sprite_manager,
@@ -234,9 +231,7 @@ void transition_to_wthr_state(ScreenStatePtr state)
         Button* crs_btn = malloc(sizeof(Button));
         Button* menu_btn = malloc(sizeof(Button));
 
-        btn_init(menu_btn, menu_sprite, menu_btn_callback, state);
         btn_init(crs_btn, crs_sprite, crs_btn_callback, NULL);
-        ui_man_add(&forecast_data.ui_manager, menu_btn);
         ui_man_add(&forecast_data.ui_manager, crs_btn);
 
         forecast_data.has_loaded = 1;
@@ -293,11 +288,6 @@ void* wthr_state_update_thread(void* config_data)
 
     weather_free_api(&w_api);
     return NULL;
-}
-
-static void menu_btn_callback(void* state)
-{
-    transition_to_menu(state);
 }
 
 static void frcst_wdgt_btn_callback(void* data)
