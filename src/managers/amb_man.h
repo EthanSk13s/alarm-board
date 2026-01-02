@@ -13,8 +13,8 @@ typedef struct
 
 int amb_man_init(AmbianceManager* amb_man);
 int amb_man_is_done(AmbianceManager* amb_man);
+int amb_man_start(AmbianceManager* amb_man, int length);
 void amb_man_update(AmbianceManager* amb_man);
-void amb_man_start(AmbianceManager* amb_man, int length);
 void amb_man_stop(AmbianceManager* amb_man);
 void amb_man_free(AmbianceManager* amb_man);
 

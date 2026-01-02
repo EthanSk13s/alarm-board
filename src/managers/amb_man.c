@@ -70,15 +70,21 @@ void amb_man_update(AmbianceManager* amb_man)
     music_update(&amb_man->amb->music_h);
 }
 
-void amb_man_start(AmbianceManager* amb_man, int length)
+int amb_man_start(AmbianceManager* amb_man, int length)
 {
     if (amb_man == NULL)
     {
-        return;
+        return -1;
+    }
+
+    if (music_play(&amb_man->amb->music_h) == -1)
+    {
+        return -1;
     }
 
     timer_start(&amb_man->amb_timer, length);
-    music_play(&amb_man->amb->music_h);
+
+    return 0;
 }
 
 void amb_man_stop(AmbianceManager* amb_man)

@@ -254,11 +254,14 @@ static void clear_btn_callback(void* data)
 
 static void start_btn_callback(void* data)
 {
-    toggle_btns(&amb_data);
     AmbianceManager* amb_man = get_amb_man();
-    amb_man_start(amb_man, amb_data.timer_val);
+    int res = amb_man_start(amb_man, amb_data.timer_val);
 
-    amb_data.timer_started = 1;
+    if (res != -1)
+    {
+        toggle_btns(&amb_data);
+        amb_data.timer_started = 1;
+    }
 }
 
 static void rain_btn_callback(void* data)
