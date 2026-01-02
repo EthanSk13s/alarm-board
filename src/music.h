@@ -16,6 +16,6 @@ int music_seek(MusicHandler* music_h, float position);
 float music_get_pos(MusicHandler* music_h);
 int music_is_playing(MusicHandler* music_h);
 void music_stop(MusicHandler* music_h);
-void music_play(MusicHandler* music_h);
+int music_play(MusicHandler* music_h);
 
 #endif

@@ -96,12 +96,19 @@ void music_stop(MusicHandler* music_h)
     StopMusicStream(music_h->music);
 }
 
-void music_play(MusicHandler* music_h)
+int music_play(MusicHandler* music_h)
 {
     if (music_h == NULL)
     {
-        return;
+        return -1;
+    }
+
+    if (!IsMusicValid(music_h->music))
+    {
+        return -1;
     }
 
     PlayMusicStream(music_h->music);
+
+    return 0;
 }
