@@ -108,20 +108,20 @@ int main(void)
     {
         char* api_key = ht_get(cfg_map, "API_KEY");
 
-        WeatherStateConfig cfg;
-        strncpy(cfg.key, api_key, WEATHER_API_KEY_SIZE);
-        cfg.key[strcspn(cfg.key, "\n")] = 0;
+        WeatherStateConfig* cfg = malloc(sizeof(WeatherStateConfig));
+        strncpy(cfg->key, api_key, WEATHER_API_KEY_SIZE);
+        cfg->key[strcspn(cfg->key, "\n")] = 0;
 
         // TODO: Add units to config.
-        cfg.unit = IMPERIAL;
+        cfg->unit = IMPERIAL;
 
         char* latitude = ht_get(cfg_map, "LATITUDE");
         char* longitude = ht_get(cfg_map, "LONGITUDE");
-        cfg.latitude = atof(latitude);
-        cfg.longitude = atof(longitude);
+        cfg->latitude = atof(latitude);
+        cfg->longitude = atof(longitude);
 
         wthr_state_init();
-        pthread_create(&wthr_update_thread, NULL, wthr_state_update_thread, (void*) &cfg);
+        pthread_create(&wthr_update_thread, NULL, wthr_state_update_thread, (void*) cfg);
     }
 
     // Main game loop
