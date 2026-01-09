@@ -207,10 +207,10 @@ void transition_to_wthr_state(ScreenStatePtr state)
                                            btn_scales,
                                            WHITE,
                                            0);
-        Sprite* crnt_frcst_sprite = create_sprite(5,
-                                                  50,
+        Sprite* crnt_frcst_sprite = create_sprite((width / 10) / 2,
+                                                  (height / 2) / 3,
                                                   unkwn_texture,
-                                                  (TextureSet) { 35, 0 },
+                                                  (TextureSet) { 25, 0 },
                                                   RED,
                                                   0);
 
