@@ -17,19 +17,22 @@
 #include "../widgets/template_buttons.h"
 
 #define SNOOZE_TIME 600.0
+#define FADE_TIME 2.5
+#define UI_TO_HIDE_SIZE 3
 
 struct ClockData
 {
     int play_alarm;
     int textures_loaded;
+    int snooze_id;
     Button* alarm_button;
     Button* toggle_button;
     Button* snooze_button;
-    Button* wthr_button;
     SpriteManager* sprite_manager;
+    int ui_to_hide[UI_TO_HIDE_SIZE];
     UIManager ui_manager;
     Timer snooze_timer;
-    int snooze_id;
+    Timer fade_timer;
     char clock[26];
     char alarm_cmp[26];
 };
@@ -52,6 +55,32 @@ static void clock_update(ScreenStatePtr state)
 
     strftime(clock_data.clock, 26, "%H:%M", tm_info);
     ui_man_poll(&clock_data.ui_manager);
+
+    if (timer_done(clock_data.fade_timer))
+    {
+        for (int i = 0; i < UI_TO_HIDE_SIZE; i++)
+        {
+            int sprite_id = clock_data.ui_to_hide[i];
+            clock_data.sprite_manager->sprites[sprite_id]->visible = 0;
+        }
+    }
+
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) || IsGestureDetected(GESTURE_TAP))
+    {
+        timer_start(&clock_data.fade_timer, FADE_TIME);
+
+        for (int i = 0; i < UI_TO_HIDE_SIZE; i++)
+        {
+            int sprite_id = clock_data.ui_to_hide[i];
+            Sprite* sprite = clock_data.sprite_manager->sprites[sprite_id];
+
+            if (!sprite->visible)
+            {
+                sprite->visible = 1;
+            }
+        }
+    }
+
 
     if (timer_done(clock_data.snooze_timer) && !clock_data.play_alarm && clock_data.snooze_button->is_pressed)
     {
@@ -108,6 +137,7 @@ void transition_to_clock(ScreenStatePtr state)
     clock_data.play_alarm = 0;
     struct tm alarm_tm = get_alarm();
     strftime(clock_data.alarm_cmp, 26, "%H:%M", &alarm_tm);
+    timer_start(&clock_data.fade_timer, FADE_TIME);
 
     if (!clock_data.textures_loaded)
     {
@@ -141,15 +171,17 @@ void transition_to_clock(ScreenStatePtr state)
                                               btn_texture_opts,
                                               BLUE,
                                               0);
-        button_menu(get_texture_man(),
-                    clock_data.sprite_manager,
-                    &clock_data.ui_manager,
-                    state,
-                    0,
-                    20);
+        clock_data.ui_to_hide[0] = button_menu(get_texture_man(),
+                                               clock_data.sprite_manager,
+                                               &clock_data.ui_manager,
+                                               state,
+                                               0,
+                                               20);
         
-        add_to_sprite_manager(clock_data.sprite_manager, alarm_sprite);
-        add_to_sprite_manager(clock_data.sprite_manager, toggle_sprite);
+        clock_data.ui_to_hide[1] = add_to_sprite_manager(clock_data.sprite_manager,
+                                                         alarm_sprite);
+        clock_data.ui_to_hide[2] = add_to_sprite_manager(clock_data.sprite_manager,
+                                                         toggle_sprite);
 
         clock_data.snooze_id = add_to_sprite_manager(clock_data.sprite_manager,
                                                      snooze_sprite);
