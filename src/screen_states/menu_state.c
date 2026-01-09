@@ -1,3 +1,5 @@
+#include "stdlib.h"
+
 #include "menu_state.h"
 
 #include "../info_storage.h"
@@ -23,6 +25,23 @@ void menu_draw(ScreenStatePtr state)
 {
     ClearBackground(BLACK);
     draw_sprites(menu_data.sprite_manager);
+}
+
+void clean_up_menu_state()
+{
+    if (menu_data.textures_loaded != 0)
+    {
+        Button* curr_btn = ui_man_pop(&menu_data.ui_manager);
+        while(curr_btn)
+        {
+            free(curr_btn);
+            curr_btn = ui_man_pop(&menu_data.ui_manager);
+        }
+
+        sprite_man_free(menu_data.sprite_manager);
+    }
+
+    menu_data.textures_loaded = 1;
 }
 
 void transition_to_menu(ScreenStatePtr state)

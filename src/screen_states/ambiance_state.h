@@ -4,5 +4,6 @@
 #include "screen_state.h"
 
 void transition_to_amb_state(ScreenStatePtr state);
+void clean_up_amb_state();
 
 #endif

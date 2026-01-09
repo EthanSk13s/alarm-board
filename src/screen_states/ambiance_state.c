@@ -91,6 +91,23 @@ void amb_draw(ScreenStatePtr state)
     draw_sprites(amb_data.sprite_manager);
 }
 
+void clean_up_amb_state()
+{
+    if (amb_data.textures_loaded != 0)
+    {
+        Button* curr_btn = ui_man_pop(&amb_data.ui_manager);
+        while(curr_btn)
+        {
+            free(curr_btn);
+            curr_btn = ui_man_pop(&amb_data.ui_manager);
+        }
+
+        sprite_man_free(amb_data.sprite_manager);
+    }
+
+    amb_data.textures_loaded = 1;
+}
+
 void transition_to_amb_state(ScreenStatePtr state)
 {
     state->update = amb_update;
