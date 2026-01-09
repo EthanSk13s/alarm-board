@@ -3,13 +3,13 @@
 #include <raylib.h>
 
 #include "alarm_state.h"
-#include "clock_state.h"
 #include "screen_state.h"
 
 #include "../managers/sprite_man.h"
 #include "../managers/ui_man.h"
 #include "../info_storage.h"
 #include "../button.h"
+#include "../widgets/template_buttons.h"
 
 #define ARROW_SCALE 4
 
@@ -20,13 +20,11 @@ struct AlarmData
     SpriteManager* sprite_manager;
     UIManager ui_manager;
     struct tm alarm_tm;
-    Button* clk_btn;
 };
 
 static struct AlarmData alarm_data;
 
 // Button callbacks
-static void clock_btn_callback(void* state);
 static void hour_btn_inc_callback(void* data);
 static void hour_btn_dec_callback(void* data);
 static void min_btn_inc_callback(void* data);
@@ -73,9 +71,7 @@ void transition_to_alarm(ScreenStatePtr state)
         ui_man_init(&alarm_data.ui_manager);
 
         Texture2D* arrow_texture = texture_manager_get(get_texture_man(), "alarm-arrow");
-        Texture2D* clock_texture = texture_manager_get(get_texture_man(), "clock");
 
-        TextureSet clock_opts = { 10, 0 };
         TextureSet upper_opts = { ARROW_SCALE, 0 };
         TextureSet lower_opts = { ARROW_SCALE, 180 };
 
@@ -103,39 +99,32 @@ void transition_to_alarm(ScreenStatePtr state)
                                                       upper_opts,
                                                       BLUE,
                                                       0);
-        Sprite* clock_sprite = create_sprite(width - 180,
-                                             height / 1.5,
-                                             clock_texture,
-                                             clock_opts,
-                                             WHITE,
-                                             0);
+        button_clock(get_texture_man(),
+                     alarm_data.sprite_manager,
+                     &alarm_data.ui_manager,
+                     state,
+                     width - 180,
+                     height / 1.5);
 
         add_to_sprite_manager(alarm_data.sprite_manager, hour_btn_dec_sprite);
         add_to_sprite_manager(alarm_data.sprite_manager, hour_btn_inc_sprite);
         add_to_sprite_manager(alarm_data.sprite_manager, minute_btn_dec_sprite);
         add_to_sprite_manager(alarm_data.sprite_manager, minute_btn_inc_sprite);
-        add_to_sprite_manager(alarm_data.sprite_manager, clock_sprite);
 
         Button* hour_button_dec = malloc(sizeof(Button));
         Button* hour_button_inc  = malloc(sizeof(Button));
         Button* min_button_dec = malloc(sizeof(Button));
         Button* min_button_inc = malloc(sizeof(Button));
-        Button* clk_button = malloc(sizeof(Button));
 
         btn_init(hour_button_dec, hour_btn_dec_sprite, hour_btn_dec_callback, NULL);
         btn_init(hour_button_inc, hour_btn_inc_sprite, hour_btn_inc_callback, NULL);
         btn_init(min_button_dec, minute_btn_dec_sprite, min_btn_dec_callback, NULL);
         btn_init(min_button_inc, minute_btn_inc_sprite, min_btn_inc_callback, NULL);
-        btn_init(clk_button, clock_sprite, clock_btn_callback, state);
 
         ui_man_add(&alarm_data.ui_manager, hour_button_dec);
         ui_man_add(&alarm_data.ui_manager, hour_button_inc);
         ui_man_add(&alarm_data.ui_manager, min_button_dec);
         ui_man_add(&alarm_data.ui_manager, min_button_inc);
-
-        int clk_btn_id = ui_man_add(&alarm_data.ui_manager, clk_button);
-
-        alarm_data.clk_btn = clk_button;
         
         alarm_data.textures_loaded = 1;
     }
@@ -155,11 +144,6 @@ void clean_up_alarm_state()
         sprite_man_free(alarm_data.sprite_manager);
     }
     alarm_data.textures_loaded = 0;
-}
-
-static void clock_btn_callback(void* state)
-{
-    transition_to_clock(state);
 }
 
 static void hour_btn_inc_callback(void* data)
