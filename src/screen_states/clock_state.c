@@ -25,6 +25,7 @@ struct ClockData
     int play_alarm;
     int textures_loaded;
     int snooze_id;
+    int toggle_id;
     Button* alarm_button;
     Button* toggle_button;
     Button* snooze_button;
@@ -116,16 +117,6 @@ static void clock_draw(ScreenStatePtr state)
                 ((float) get_current_height() / 2) - (center.y / 2), CLOCK_FONT_SIZE, RED);
     
     draw_sprites(clock_data.sprite_manager);
-
-    // Note: Temporary status toggle.
-    if (clock_data.toggle_button->is_pressed)
-    {
-        DrawRectangle(100,
-                      (float) (get_current_height() / 1.5),
-                      10,
-                      10,
-                      RED);
-    }
 }
 
 void transition_to_clock(ScreenStatePtr state)
@@ -180,8 +171,9 @@ void transition_to_clock(ScreenStatePtr state)
         
         clock_data.ui_to_hide[1] = add_to_sprite_manager(clock_data.sprite_manager,
                                                          alarm_sprite);
-        clock_data.ui_to_hide[2] = add_to_sprite_manager(clock_data.sprite_manager,
-                                                         toggle_sprite);
+        clock_data.toggle_id = add_to_sprite_manager(clock_data.sprite_manager,
+                                                     toggle_sprite);
+        clock_data.ui_to_hide[2] = clock_data.toggle_id;
 
         clock_data.snooze_id = add_to_sprite_manager(clock_data.sprite_manager,
                                                      snooze_sprite);
@@ -240,9 +232,14 @@ static void toggle_btn_callback(void* data)
             toggle_sprite_visibility(clock_data.sprite_manager, clock_data.snooze_id);
             music_stop(&alarm_h);
         }
+
+        Sprite* toggle_sprite = clock_data.sprite_manager->sprites[clock_data.toggle_id];
+        toggle_sprite->color = RED;
     } else
     {
         clock_data.toggle_button->is_pressed = true;
+        Sprite* toggle_sprite = clock_data.sprite_manager->sprites[clock_data.toggle_id];
+        toggle_sprite->color = BLUE;
     }
 }
 

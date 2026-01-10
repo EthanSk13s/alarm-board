@@ -19,6 +19,7 @@ struct AmbData
     int textures_loaded;
     int timer_started;
     int timer_val;
+    int rain_btn_id;
     char timer_str[8];
     SpriteManager* sprite_manager;
     int btns_to_hide[10];
@@ -227,10 +228,10 @@ void transition_to_amb_state(ScreenStatePtr state)
         ui_man_add(&amb_data.ui_manager, hour_btn_inc);
         ui_man_add(&amb_data.ui_manager, min_btn_dec);
         ui_man_add(&amb_data.ui_manager, min_btn_inc);
-        ui_man_add(&amb_data.ui_manager, rain_btn);
         ui_man_add(&amb_data.ui_manager, cross_btn);
         ui_man_add(&amb_data.ui_manager, check_btn);
 
+        amb_data.rain_btn_id = ui_man_add(&amb_data.ui_manager, rain_btn);
         amb_data.textures_loaded = 1;
     }
 }
@@ -283,6 +284,13 @@ static void start_btn_callback(void* data)
 
 static void rain_btn_callback(void* data)
 {
+    Button* rain_btn = amb_data.ui_manager.btns[amb_data.rain_btn_id];
+
+    if (!rain_btn->is_pressed) 
+    {
+        rain_btn->sprite->color = GRAY;
+    }
+
     // TODO: Add button feedback.
     AmbianceManager* amb_man = get_amb_man();
     amb_man_switch_to_rain(amb_man);
