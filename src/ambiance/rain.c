@@ -38,7 +38,7 @@ void switch_to_rain_amb(AmbiancePtr amb)
 {
     amb->setup = update_rain_amb;
     music_init(&amb->music_h, "assets/rain.mp3");
-    music_set_vol(&amb->music_h, 0.15);
+    music_set_vol(&amb->music_h, 0.025);
 
     update_rain_amb(amb);
 }
