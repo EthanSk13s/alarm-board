@@ -1,5 +1,7 @@
 #include <stdlib.h>
 
+#include <raylib.h>
+
 #include "amb_man.h"
 #include "../timer.h"
 #include "../ambiance/rain.h"
@@ -17,6 +19,7 @@ int amb_man_init(AmbianceManager* amb_man)
     amb_man->amb->max_length = -1;
     amb_man->amb->min_length = -1;
     amb_man->amb->max_loops = -1;
+    amb_man->amb->music_h.music = (Music) { };
     amb_man->amb->setup = NULL;
 
     return 0;
