@@ -243,7 +243,10 @@ static void hour_inc_btn_callback(void* data)
 
 static void hour_dec_btn_callback(void* data)
 {
-    amb_data.timer_val -= SECONDS_IN_HOUR;
+    if (amb_data.timer_val > 0)
+    {
+        amb_data.timer_val -= SECONDS_IN_HOUR;
+    }
 }
 
 static void min_inc_btn_callback(void* data)
@@ -253,7 +256,10 @@ static void min_inc_btn_callback(void* data)
 
 static void min_dec_btn_callback(void* data)
 {
-    amb_data.timer_val -= SECONDS_IN_MINUTE;
+    if (amb_data.timer_val > 0)
+    {
+        amb_data.timer_val -= SECONDS_IN_MINUTE;
+    }
 }
 
 static void clear_btn_callback(void* data)
